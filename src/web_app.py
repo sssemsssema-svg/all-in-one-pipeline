@@ -59,6 +59,11 @@ async def get_index() -> str:
     return HTML_CONTENT
 
 
+@app.get("/notebook", response_class=HTMLResponse)
+async def get_notebook() -> str:
+    return NOTEBOOK_HTML_CONTENT
+
+
 @app.get("/api/health")
 async def health_check() -> dict[str, Any]:
     keys = {
@@ -601,3 +606,422 @@ HTML_CONTENT = """<!DOCTYPE html>
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+NOTEBOOK_HTML_CONTENT = """<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الدفتر الصوتي الذكي - Smart Voice Notebook</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;600;700;800&family=Marhey:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <style>
+    body { font-family: 'Cairo', sans-serif; }
+    .font-ruqaa { font-family: 'Aref Ruqaa', serif; }
+    .font-amiri { font-family: 'Amiri', serif; }
+    .font-cairo { font-family: 'Cairo', sans-serif; }
+    .font-marhey { font-family: 'Marhey', cursive; }
+
+    /* Paper Background Themes */
+    .theme-parchment {
+      background: #fdf6e2 url('https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1200&q=80') center/cover;
+      color: #3e2723;
+    }
+    .theme-watercolor {
+      background: #fdf2f8 url('https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1200&q=80') center/cover;
+      color: #4a044e;
+    }
+    .theme-midnight {
+      background: #0f172a url('https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80') center/cover;
+      color: #e2e8f0;
+    }
+    .theme-clean-lined {
+      background-color: #ffffff;
+      background-image: linear-gradient(#e2e8f0 1px, transparent 1px);
+      background-size: 100% 2.2rem;
+      color: #1e293b;
+    }
+    .theme-clean-grid {
+      background-color: #fafafa;
+      background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px);
+      background-size: 24px 24px;
+      color: #1e293b;
+    }
+
+    .canvas-card {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .canvas-card:hover {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+    .sortable-ghost {
+      opacity: 0.4;
+      background: rgba(99, 102, 241, 0.2) !important;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+
+  <!-- Top Navigation -->
+  <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-0 z-40 px-4 py-3">
+    <div class="max-w-5xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+        <div>
+          <h1 class="text-base font-bold text-white flex items-center gap-2">
+            <span>الدفتر الصوتي الذكي</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-mono">Smart Voice Notebook</span>
+          </h1>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="flex items-center gap-2">
+        <!-- Font Selector -->
+        <select id="font-select" onchange="changeFont(this.value)" class="bg-slate-800 border border-slate-700 text-xs rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+          <option value="font-ruqaa">خط الرقعة الفني</option>
+          <option value="font-amiri">خط النسخ الأصيل</option>
+          <option value="font-marhey">خط مرح فني</option>
+          <option value="font-cairo">خط عصري واضح</option>
+        </select>
+
+        <!-- Export -->
+        <button onclick="window.print()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs border border-slate-700 flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-print"></i>
+          <span class="hidden sm:inline">طباعة / PDF</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Canvas Container -->
+  <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-5">
+    
+    <!-- Paper Settings & Presets -->
+    <div class="bg-slate-900/80 rounded-2xl p-3 border border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div class="flex items-center gap-2">
+        <span class="text-slate-400 font-semibold"><i class="fa-solid fa-palette text-indigo-400 ml-1"></i> ثيم الورقة:</span>
+        <button onclick="setTheme('theme-parchment')" class="px-2.5 py-1 rounded-md bg-amber-950/60 hover:bg-amber-900/80 text-amber-200 border border-amber-800/40">ورق بردي قديم</button>
+        <button onclick="setTheme('theme-watercolor')" class="px-2.5 py-1 rounded-md bg-pink-950/60 hover:bg-pink-900/80 text-pink-200 border border-pink-800/40">أزهار مائية لطيفة</button>
+        <button onclick="setTheme('theme-clean-lined')" class="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700">مسطر كلاسيكي</button>
+        <button onclick="setTheme('theme-clean-grid')" class="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700">مربعات نوت</button>
+        <button onclick="setTheme('theme-midnight')" class="px-2.5 py-1 rounded-md bg-indigo-950/60 hover:bg-indigo-900/80 text-indigo-200 border border-indigo-800/40">ليلي نيون</button>
+      </div>
+      
+      <!-- Custom AI Background Prompt -->
+      <div class="flex items-center gap-1.5 flex-1 min-w-[240px]">
+        <input id="bg-prompt-input" type="text" placeholder="اطلب خلفية بالذكاء الاصطناعي (مثلاً: رمال شاطئ هادئة)..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+        <button onclick="generateCustomBackground()" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs whitespace-nowrap transition">
+          <i class="fa-solid fa-wand-magic-sparkles ml-1"></i> توليد
+        </button>
+      </div>
+    </div>
+
+    <!-- The Actual Sheet / Canvas (Stationery Paper) -->
+    <div id="notebook-paper" class="theme-parchment font-ruqaa min-h-[700px] rounded-3xl p-6 sm:p-10 shadow-2xl relative transition-all duration-300">
+      
+      <!-- Header of the Sheet -->
+      <div class="flex items-center justify-between border-b border-black/10 pb-4 mb-6">
+        <div>
+          <h2 id="notebook-title" class="text-2xl sm:text-3xl font-bold tracking-tight" contenteditable="true">ملاحظاتي اليومية</h2>
+          <p class="text-xs opacity-60 mt-1 font-cairo" id="notebook-date"></p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="clearCanvas()" class="text-xs px-2.5 py-1 rounded-lg bg-black/5 hover:bg-black/10 transition flex items-center gap-1 font-cairo">
+            <i class="fa-solid fa-trash-can"></i> مسح الورقة
+          </button>
+        </div>
+      </div>
+
+      <!-- Drag & Drop Canvas Items -->
+      <div id="canvas-items" class="space-y-4">
+
+        <!-- Item 1: Introductory Note -->
+        <div class="canvas-card group relative p-4 rounded-2xl bg-white/40 border border-black/5 backdrop-blur-sm cursor-grab">
+          <div class="flex items-center justify-between text-xs opacity-50 mb-1 font-cairo">
+            <span class="flex items-center gap-1"><i class="fa-solid fa-grip-vertical"></i> اسحب للترتيب</span>
+            <button onclick="copyCardText(this)" class="hover:opacity-100 transition"><i class="fa-regular fa-copy"></i> نسخ بلمسة</button>
+          </div>
+          <p class="text-lg leading-relaxed content-text outline-none" contenteditable="true">
+            أهلاً بك في الدفتر الصوتي الذكي! اضغط على الميكروفون بالأسفل وتحدث بحرية.. اطلب جدولاً أو صورة أو املِ أفكارك وستتحول لخطوط أنيقة.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Sticky Bottom Voice Bar -->
+  <div class="sticky bottom-0 z-50 bg-slate-950/90 border-t border-slate-800 p-3.5 backdrop-blur-lg">
+    <div class="max-w-xl mx-auto flex items-center justify-between gap-3">
+      
+      <!-- Voice Mode Info -->
+      <div class="flex items-center gap-2 text-xs">
+        <div id="mic-indicator" class="w-3 h-3 rounded-full bg-slate-600 transition-all"></div>
+        <span id="mic-status" class="text-slate-400 font-cairo">الميكروفون متوقف (اضغط للتحدث)</span>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex items-center gap-2">
+        <button onclick="insertSampleTable()" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-cairo flex items-center gap-1 transition">
+          <i class="fa-solid fa-table"></i> + جدول
+        </button>
+        
+        <button onclick="promptForImage()" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-cairo flex items-center gap-1 transition">
+          <i class="fa-solid fa-image"></i> + صورة AI
+        </button>
+
+        <!-- Big Mic Button -->
+        <button id="mic-btn" onclick="toggleVoiceRecognition()" class="w-12 h-12 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center text-lg shadow-lg shadow-indigo-600/30 transition-all hover:scale-105 active:scale-95">
+          <i class="fa-solid fa-microphone"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Initialize date
+    document.getElementById('notebook-date').innerText = new Date().toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    // Enable Drag and Drop
+    const canvasItems = document.getElementById('canvas-items');
+    new Sortable(canvasItems, {
+      animation: 250,
+      ghostClass: 'sortable-ghost',
+      handle: '.canvas-card',
+      delay: 100,
+      delayOnTouchOnly: true
+    });
+
+    // Theme changer
+    function setTheme(themeClass) {
+      const paper = document.getElementById('notebook-paper');
+      paper.className = `${themeClass} ${document.getElementById('font-select').value} min-h-[700px] rounded-3xl p-6 sm:p-10 shadow-2xl relative transition-all duration-300`;
+      paper.style.backgroundImage = '';
+    }
+
+    // Font changer
+    function changeFont(fontClass) {
+      const paper = document.getElementById('notebook-paper');
+      paper.classList.remove('font-ruqaa', 'font-amiri', 'font-cairo', 'font-marhey');
+      paper.classList.add(fontClass);
+    }
+
+    // Copy with one tap
+    function copyCardText(btn) {
+      const card = btn.closest('.canvas-card');
+      const text = card.querySelector('.content-text').innerText;
+      navigator.clipboard.writeText(text);
+      btn.innerHTML = '<i class="fa-solid fa-check text-emerald-500"></i> تم النسخ!';
+      setTimeout(() => { btn.innerHTML = '<i class="fa-regular fa-copy"></i> نسخ بلمسة'; }, 1800);
+    }
+
+    // Remove Card
+    function deleteCard(btn) {
+      btn.closest('.canvas-card').remove();
+    }
+
+    // Clear Canvas
+    function clearCanvas() {
+      if (confirm('هل تريد مسح كل محتويات الدفتر؟')) {
+        canvasItems.innerHTML = '';
+      }
+    }
+
+    // Custom AI Generated Background
+    function generateCustomBackground() {
+      const prompt = document.getElementById('bg-prompt-input').value.trim();
+      if (!prompt) return alert('اكتب وصف الخلفية أولاً');
+      const encodedPrompt = encodeURIComponent(`texture background wallpaper stationery paper art, ${prompt}`);
+      const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1200&height=1600&nologo=true&seed=${Math.floor(Math.random()*10000)}`;
+      
+      const paper = document.getElementById('notebook-paper');
+      paper.style.background = `url('${imageUrl}') center/cover no-repeat`;
+    }
+
+    // Insert Image Card
+    function insertImageCard(imageUrl, caption) {
+      const div = document.createElement('div');
+      div.className = 'canvas-card group relative p-4 rounded-2xl bg-white/60 border border-black/5 backdrop-blur-sm cursor-grab shadow-sm';
+      div.innerHTML = `
+        <div class="flex items-center justify-between text-xs opacity-50 mb-2 font-cairo">
+          <span class="flex items-center gap-1"><i class="fa-solid fa-grip-vertical"></i> صورة ذكية</span>
+          <div class="flex items-center gap-2">
+            <button onclick="deleteCard(this)" class="hover:text-red-500 transition"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        </div>
+        <div class="rounded-xl overflow-hidden border border-black/10">
+          <img src="${imageUrl}" alt="${caption}" class="w-full max-h-80 object-cover rounded-xl" loading="lazy">
+        </div>
+        <p class="text-sm mt-2 opacity-80 text-center font-cairo content-text" contenteditable="true">${caption}</p>
+      `;
+      canvasItems.appendChild(div);
+      div.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Prompt for Image
+    function promptForImage() {
+      const userPrompt = prompt('اكتب ما تريد رسمه بالذكاء الاصطناعي (مثال: شروق الشمس فوق الأهرامات بطراز كرتوني لطيف):');
+      if (!userPrompt) return;
+      const encoded = encodeURIComponent(`high quality masterpiece, ${userPrompt}`);
+      const imgUrl = `https://image.pollinations.ai/prompt/${encoded}?width=800&height=600&nologo=true&seed=${Math.floor(Math.random()*10000)}`;
+      insertImageCard(imgUrl, userPrompt);
+    }
+
+    // Insert Table Card
+    function insertTableCard(headers, rows) {
+      const div = document.createElement('div');
+      div.className = 'canvas-card group relative p-4 rounded-2xl bg-white/60 border border-black/5 backdrop-blur-sm cursor-grab overflow-x-auto shadow-sm';
+      
+      let headerHtml = headers.map(h => `<th class="p-2.5 border-b border-black/10 font-bold font-cairo">${h}</th>`).join('');
+      let rowsHtml = rows.map(r => `
+        <tr class="border-b border-black/5 hover:bg-black/5 transition">
+          ${r.map(cell => `<td class="p-2.5 font-cairo" contenteditable="true">${cell}</td>`).join('')}
+        </tr>
+      `).join('');
+
+      div.innerHTML = `
+        <div class="flex items-center justify-between text-xs opacity-50 mb-2 font-cairo">
+          <span class="flex items-center gap-1"><i class="fa-solid fa-grip-vertical"></i> جدول منظم</span>
+          <div class="flex items-center gap-2">
+            <button onclick="copyCardText(this)" class="hover:opacity-100 transition"><i class="fa-regular fa-copy"></i> نسخ</button>
+            <button onclick="deleteCard(this)" class="hover:text-red-500 transition"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        </div>
+        <table class="w-full text-right text-sm border-collapse content-text">
+          <thead><tr>${headerHtml}</tr></thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+      `;
+      canvasItems.appendChild(div);
+      div.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function insertSampleTable() {
+      insertTableCard(['العنصر', 'التفاصيل', 'الحالة'], [
+        ['مهمة 1', 'كتابة التقرير الأسبوعي', 'مكتملة ✓'],
+        ['مهمة 2', 'تسجيل الأفكار بالصوت', 'قيد التنفيذ...'],
+        ['مهمة 3', 'توليد الصور المخصصة', 'جديدة']
+      ]);
+    }
+
+    // Insert Text Card
+    function insertTextCard(text) {
+      const div = document.createElement('div');
+      div.className = 'canvas-card group relative p-4 rounded-2xl bg-white/40 border border-black/5 backdrop-blur-sm cursor-grab shadow-sm';
+      div.innerHTML = `
+        <div class="flex items-center justify-between text-xs opacity-50 mb-1 font-cairo">
+          <span class="flex items-center gap-1"><i class="fa-solid fa-grip-vertical"></i> فقرة صوتية</span>
+          <div class="flex items-center gap-2">
+            <button onclick="copyCardText(this)" class="hover:opacity-100 transition"><i class="fa-regular fa-copy"></i> نسخ بلمسة</button>
+            <button onclick="deleteCard(this)" class="hover:text-red-500 transition"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        </div>
+        <p class="text-xl leading-relaxed content-text outline-none" contenteditable="true">${text}</p>
+      `;
+      canvasItems.appendChild(div);
+      div.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ==========================================
+    // Web Speech API - Voice Dictation & Intents
+    // ==========================================
+    let recognition = null;
+    let isListening = false;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = false;
+      recognition.lang = 'ar-EG'; // Default Egyptian Arabic
+
+      recognition.onstart = function() {
+        isListening = true;
+        document.getElementById('mic-indicator').className = 'w-3 h-3 rounded-full bg-rose-500 animate-ping';
+        document.getElementById('mic-status').innerText = 'الميكروفون يستمع الآن.. تكلم بحرية!';
+        document.getElementById('mic-status').className = 'text-rose-400 font-bold font-cairo';
+        document.getElementById('mic-btn').className = 'w-12 h-12 rounded-full bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center text-lg shadow-lg shadow-rose-600/40 animate-pulse';
+      };
+
+      recognition.onend = function() {
+        isListening = false;
+        document.getElementById('mic-indicator').className = 'w-3 h-3 rounded-full bg-slate-600';
+        document.getElementById('mic-status').innerText = 'الميكروفون متوقف';
+        document.getElementById('mic-status').className = 'text-slate-400 font-cairo';
+        document.getElementById('mic-btn').className = 'w-12 h-12 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center text-lg shadow-lg shadow-indigo-600/30';
+      };
+
+      recognition.onresult = function(event) {
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            const transcript = event.results[i][0].transcript.trim();
+            handleVoiceCommand(transcript);
+          }
+        }
+      };
+
+      recognition.onerror = function(event) {
+        console.error('Speech error:', event.error);
+        if (event.error === 'not-allowed') {
+          alert('برجاء السماح بصلاحية الميكروفون في المتصفح لاستخدام الإملاء الصوتي');
+        }
+      };
+    }
+
+    function toggleVoiceRecognition() {
+      if (!recognition) {
+        return alert('المتصفح لديك لا يدعم ميزة التعرف على الصوت. يرجى استخدام متصفح Chrome أو Edge');
+      }
+      if (isListening) {
+        recognition.stop();
+      } else {
+        recognition.start();
+      }
+    }
+
+    // Voice Intent Classifier
+    function handleVoiceCommand(text) {
+      console.log('Voice Input:', text);
+
+      // Intent 1: Image Request ("صورة" أو "ارسم" أو "توليد صورة")
+      if (text.includes('صورة') || text.includes('ارسم') || text.includes('صوره')) {
+        let cleanPrompt = text.replace(/اعمل صورة|حط صورة|ارسم لي|ارسم|صورة|صوره/g, '').trim();
+        if (!cleanPrompt) cleanPrompt = text;
+        const encoded = encodeURIComponent(`masterpiece artistic, ${cleanPrompt}`);
+        const imgUrl = `https://image.pollinations.ai/prompt/${encoded}?width=800&height=600&nologo=true&seed=${Math.floor(Math.random()*10000)}`;
+        insertImageCard(imgUrl, cleanPrompt);
+        return;
+      }
+
+      // Intent 2: Table Request ("جدول" أو "اعمل جدول")
+      if (text.includes('جدول')) {
+        // Simple intelligent split
+        let parts = text.split(/خانات|خانة|عمود|أعمدة|الأولى|الثانية|الثالثة|الاولى|الثانيه|الثالثه/);
+        let headers = ['الخانة 1', 'الخانة 2', 'الخانة 3'];
+        if (parts.length > 2) {
+          headers = parts.slice(1, 4).map(p => p.replace(/[،,]/g, '').trim()).filter(Boolean);
+        }
+        insertTableCard(headers, [
+          ['بيان 1', 'محتوى 1', 'مكتمل'],
+          ['بيان 2', 'محتوى 2', 'قيد المتابعة']
+        ]);
+        return;
+      }
+
+      // Intent 3: Normal text dictation
+      insertTextCard(text);
+    }
+  </script>
+</body>
+</html>
+"""
