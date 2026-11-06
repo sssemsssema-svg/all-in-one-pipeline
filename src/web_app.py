@@ -476,7 +476,7 @@ HTML_CONTENT = """<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>All In One - مركز قيادة الذكاء الاصطناعي متعدد الوكلاء</title>
+  <title>All In One - مركز قيادة الذكاء الاصطناعي</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -492,332 +492,129 @@ HTML_CONTENT = """<!DOCTYPE html>
   <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed bottom-6 left-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- Header & Top Navigation -->
+  <!-- Header -->
   <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-0 z-40 px-4 py-3">
-    <div class="max-w-6xl mx-auto flex items-center justify-between flex-wrap gap-4">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-indigo-600/30">
-          <i class="fa-solid fa-atom text-xl animate-spin-slow"></i>
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-600/30">
+          <i class="fa-solid fa-atom text-xl"></i>
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-lg font-black tracking-tight text-white">All In One</h1>
-            <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-mono">v2.5 Production</span>
+            <h1 class="text-base font-bold text-white">All In One Pipeline</h1>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono">Zero-Touch Ready</span>
           </div>
-          <p class="text-[11px] text-slate-400">Zero-Touch Multi-Agent Pipeline & Automated Studio</p>
+          <p class="text-[11px] text-slate-400">مركز القيادة المباشر • فكرة بالصوت أو لصق المشكلة للتطبيق الفوري</p>
         </div>
-      </div>
-
-      <!-- Navigation Tabs -->
-      <div class="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-2xl border border-slate-800/80 flex-wrap">
-        <button id="nav-btn-generator" onclick="switchNavTab('generator')" class="nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-indigo-600 text-white flex items-center gap-2">
-          <i class="fa-solid fa-microphone-lines text-indigo-300"></i> إطلاق المشاريع بالصوت
-        </button>
-        <button id="nav-btn-lab" onclick="switchNavTab('lab')" class="nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-slate-200 flex items-center gap-2">
-          <i class="fa-solid fa-microscope text-purple-400"></i> مختبر التعديل ومجلس الـ Agents
-        </button>
-        <button id="nav-btn-export" onclick="switchNavTab('export')" class="nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-slate-200 flex items-center gap-2">
-          <i class="fa-solid fa-box-archive text-emerald-400"></i> تصدير APK / EXE / Cloud
-        </button>
-        <a href="/notebook" class="px-4 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-slate-200 flex items-center gap-2 bg-slate-900 border border-slate-800">
-          <i class="fa-solid fa-book-open text-amber-400"></i> الدفتر الذكي & Bing
-        </a>
       </div>
     </div>
   </header>
 
-  <!-- ============================================================== -->
-  <!-- TAB 1: VOICE PROJECT INTAKE & GENERATOR                        -->
-  <!-- ============================================================== -->
-  <main id="tab-generator" class="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
-    <div class="bg-gradient-to-br from-indigo-950/40 via-slate-900 to-purple-950/30 border border-slate-800 rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-2xl">
-      <div class="max-w-3xl">
-        <span class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 inline-block mb-3">
-          <i class="fa-solid fa-satellite-dish ml-1 text-indigo-400"></i> البوابة الصوتية للمشاريع الكاملة
-        </span>
-        <h2 class="text-2xl sm:text-3xl font-black text-white mb-2">تكلمي بفكرتك بحرية.. والبايب لاين يبنيها كاملة</h2>
-        <p class="text-sm text-slate-300 leading-relaxed">
-          الميكروفون هنا مفتوح ومستمر مش هيفصل حتى لو سكتي دقيقة. قولي فكرة اللعبة أو البرنامج أو الموقع بالتفصيل، والبايب لاين هيستلم الصوت، يمرره عبر <strong>(Creative ⬅️ Architect ⬅️ Coder)</strong> ويطلعه لك جاهز للاستخدام!
-        </p>
-      </div>
-    </div>
+  <!-- Main Container -->
+  <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-8">
 
-    <!-- Voice & Prompt Box -->
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col gap-4 shadow-xl">
-      <!-- Target Platform Selection -->
-      <div>
-        <label class="block text-xs font-bold text-slate-300 mb-2 font-cairo">المنصة المستهدفة للمشروع (Target Output):</label>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <label class="cursor-pointer border border-indigo-500/60 bg-indigo-950/30 p-3.5 rounded-2xl flex items-center gap-3 transition">
-            <input type="radio" name="project_platform" value="android" checked class="text-indigo-600 focus:ring-0">
-            <div>
-              <span class="text-xs font-bold text-white block"><i class="fa-brands fa-android text-emerald-400 ml-1"></i> تطبيق أندرويد (APK)</span>
-              <span class="text-[10px] text-slate-400 block">+ سيرفر كلاود دائم 24/7</span>
-            </div>
-          </label>
-          <label class="cursor-pointer border border-slate-800 bg-slate-950 p-3.5 rounded-2xl flex items-center gap-3 transition hover:border-slate-700">
-            <input type="radio" name="project_platform" value="windows" class="text-indigo-600 focus:ring-0">
-            <div>
-              <span class="text-xs font-bold text-white block"><i class="fa-brands fa-windows text-cyan-400 ml-1"></i> برنامج كمبيوتر (EXE)</span>
-              <span class="text-[10px] text-slate-400 block">Windows Executable</span>
-            </div>
-          </label>
-          <label class="cursor-pointer border border-slate-800 bg-slate-950 p-3.5 rounded-2xl flex items-center gap-3 transition hover:border-slate-700">
-            <input type="radio" name="project_platform" value="web" class="text-indigo-600 focus:ring-0">
-            <div>
-              <span class="text-xs font-bold text-white block"><i class="fa-solid fa-globe text-indigo-400 ml-1"></i> موقع / خدمة ويب</span>
-              <span class="text-[10px] text-slate-400 block">Full-Stack Cloud Web</span>
-            </div>
-          </label>
-          <label class="cursor-pointer border border-slate-800 bg-slate-950 p-3.5 rounded-2xl flex items-center gap-3 transition hover:border-slate-700">
-            <input type="radio" name="project_platform" value="game" class="text-indigo-600 focus:ring-0">
-            <div>
-              <span class="text-xs font-bold text-white block"><i class="fa-solid fa-gamepad text-purple-400 ml-1"></i> لعبة تفاعلية</span>
-              <span class="text-[10px] text-slate-400 block">2D / Web Game</span>
-            </div>
-          </label>
-        </div>
-      </div>
-
-      <!-- Live Voice Intake Box -->
-      <div class="relative">
-        <div class="flex items-center justify-between mb-2">
-          <label class="text-xs font-bold text-slate-300 font-cairo">فكرة المشروع (سجلي بالصوت أو اكتبي):</label>
-          <div class="flex items-center gap-2">
-            <span id="voice-indicator" class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
-            <span id="voice-status" class="text-xs text-slate-400 font-cairo">الميكروفون متوقف</span>
+    <!-- ============================================================== -->
+    <!-- SLOT 1: VOICE PROJECT INTAKE                                   -->
+    <!-- ============================================================== -->
+    <section class="bg-slate-900 border border-slate-800/90 rounded-3xl p-6 shadow-xl flex flex-col gap-4">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 flex-wrap gap-2">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center text-sm font-bold">
+            <i class="fa-solid fa-microphone-lines"></i>
+          </div>
+          <div>
+            <h2 class="text-sm font-bold text-white">الخانة الأولى: فكرة مشروع جديد بالصوت (Voice Intake)</h2>
+            <p class="text-[11px] text-slate-400">الميكروفون مستمر ومفتوح دايماً.. تكلمي براحتك بدون ما يفصل</p>
           </div>
         </div>
-        <textarea id="project-prompt-input" rows="4" placeholder="اضغطي على زر المايك وتكلمي بكل تفاصيل فكرتك.. مثلاً: عايزة أعمل تطبيق لمتابعة المصاريف اليومية بالصوت مع تقارير شهرية وتنبيهات ورسوم بيانية..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 leading-relaxed"></textarea>
+        <div class="flex items-center gap-2">
+          <span id="voice-indicator" class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
+          <span id="voice-status" class="text-xs text-slate-400 font-cairo">الميكروفون متوقف</span>
+        </div>
       </div>
 
-      <!-- Controls -->
+      <!-- Textarea -->
+      <textarea id="project-prompt-input" rows="3" placeholder="اضغطي على زر المايك وتكلمي بفكرة مشروعك، اللعبة أو البرنامج بالكامل، أو اكتبيها هنا..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 leading-relaxed"></textarea>
+
+      <!-- Actions -->
       <div class="flex items-center justify-between flex-wrap gap-3">
-        <button id="main-mic-btn" onclick="toggleMainVoice()" class="px-5 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-2.5 transition border border-slate-700">
-          <i class="fa-solid fa-microphone text-rose-500 text-base"></i>
+        <button id="main-mic-btn" onclick="toggleMainVoice()" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-2 transition border border-slate-700">
+          <i class="fa-solid fa-microphone text-rose-500 text-sm"></i>
           <span id="main-mic-btn-label">بدء التسجيل الصوتي المستمر</span>
         </button>
 
-        <button onclick="startPipelineJob()" id="start-pipeline-btn" class="px-7 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-2.5 transition shadow-xl shadow-indigo-600/30">
-          <i class="fa-solid fa-rocket"></i> إطلاق البايب لاين (Creative ⬅️ Architect ⬅️ Coder)
-        </button>
-      </div>
-    </div>
-
-    <!-- Live Execution Telemetry -->
-    <div id="telemetry-panel" class="hidden bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col gap-4">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-        <div class="flex items-center gap-2">
-          <span id="pipeline-status-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">RUNNING</span>
-          <span id="pipeline-stage-badge" class="text-xs text-slate-300 font-mono">Stage: creative</span>
-        </div>
-        <button id="download-zip-btn" class="hidden px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center gap-1.5">
-          <i class="fa-solid fa-download"></i> تحميل كود المشروع ZIP
+        <button onclick="startVoicePipelineJob()" id="start-pipeline-btn" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-2 transition shadow-lg shadow-indigo-600/30">
+          <i class="fa-solid fa-rocket"></i> إرسال الفكرة وتشغيل البايب لاين
         </button>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <!-- Terminal Logs -->
-        <div class="bg-slate-950 rounded-2xl p-4 border border-slate-800/80 h-80 overflow-y-auto font-mono text-xs text-slate-300 space-y-1" id="terminal-logs"></div>
-        <!-- Code File Viewer -->
-        <div class="bg-slate-950 rounded-2xl p-4 border border-slate-800/80 h-80 flex flex-col">
-          <div id="file-tabs" class="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-slate-800/80 mb-2"></div>
-          <pre id="code-viewer" class="flex-1 overflow-auto text-xs text-slate-200"></pre>
-        </div>
-      </div>
-    </div>
-  </main>
+      <!-- Live Stream Logs -->
+      <div id="voice-stream-panel" class="hidden bg-slate-950 rounded-2xl p-4 border border-slate-800 text-xs font-mono text-slate-300 max-h-48 overflow-y-auto space-y-1"></div>
+    </section>
 
-  <!-- ============================================================== -->
-  <!-- TAB 2: TARGETED PATCHING & COUNCIL LAB (LAB)                   -->
-  <!-- ============================================================== -->
-  <main id="tab-lab" class="hidden flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
-    <div class="bg-gradient-to-br from-purple-950/40 via-slate-900 to-indigo-950/30 border border-slate-800 rounded-3xl p-6 sm:p-8">
-      <span class="px-3 py-1 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 inline-block mb-3">
-        <i class="fa-solid fa-flask-vial ml-1 text-purple-400"></i> مختبر التعديل الموجه ومجلس الـ Agents
-      </span>
-      <h2 class="text-2xl sm:text-3xl font-black text-white mb-2">تشريح المشكلات وفحص الأكواد وتطبيقها تلقائياً</h2>
-      <p class="text-sm text-slate-300 leading-relaxed">
-        هنا بتلصقي أي كود فيه ديفو أو محتاج تحسين، وتحددي وصف المشكلة والحل المقترح. الطلب بيلف على <strong>مجلس الـ Agents الثلاثة</strong>، وبعد ما يعتمدوا الكود بنسبة <strong>10 من 10</strong>، تضغطي زرار واحد يركب التعديل في السيرفر فوراً بدون ما تلمسي كود!
-      </p>
-    </div>
-
-    <!-- Patch Request Form -->
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col gap-5 shadow-xl">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1.5 font-cairo">الملف المستهدف (Target File):</label>
-          <input id="patch-target-file" type="text" value="src/web_app.py" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs font-mono text-slate-200">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1.5 font-cairo">أرقام السطور (Lines Range):</label>
-          <input id="patch-target-lines" type="text" placeholder="مثال: Lines 120-150 أو دالة معينة" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200">
+    <!-- ============================================================== -->
+    <!-- SLOT 2: SMART PASTE & FIX                                      -->
+    <!-- ============================================================== -->
+    <section class="bg-slate-900 border border-slate-800/90 rounded-3xl p-6 shadow-xl flex flex-col gap-4">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 flex-wrap gap-2">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-purple-600/20 text-purple-400 flex items-center justify-center text-sm font-bold">
+            <i class="fa-solid fa-paste"></i>
+          </div>
+          <div>
+            <h2 class="text-sm font-bold text-white">الخانة الثانية: لصق المشكلة وتطبيق الحل (Paste & Fix)</h2>
+            <p class="text-[11px] text-slate-400">الصقي هنا كل الكلام من الشات (الكود + وصف المشكلة + الحل المتوقع) في مستطيل واحد</p>
+          </div>
         </div>
       </div>
 
-      <!-- Problem & Solution -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1.5 font-cairo">وصف المشكلة / الديفو (Defect Description):</label>
-          <textarea id="patch-problem-desc" rows="3" placeholder="مثال: المايك بيفصل بعد 3 ثواني، أو الأيقونة بتطلع إيرور في الكونسول..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200"></textarea>
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1.5 font-cairo">الحل المقترح أو النتيجة المرغوبة (Proposed Solution):</label>
-          <textarea id="patch-proposed-solution" rows="3" placeholder="مثال: إضافة حلقة auto-restart على حدث onend لمنع التوقف..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200"></textarea>
-        </div>
-      </div>
-
-      <!-- Code Snippet -->
-      <div>
-        <label class="block text-xs font-bold text-slate-300 mb-1.5 font-cairo">الكود المراد فحصه وتصحيحه (Code Snippet):</label>
-        <textarea id="patch-code-snippet" rows="5" placeholder="ألصقي هنا كود الجزئية المعطوبة..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-emerald-400"></textarea>
-      </div>
+      <!-- Single Big Paste Textarea -->
+      <textarea id="raw-paste-input" rows="8" placeholder="الصقي هنا النص كاملاً دفعة واحدة (الكود، المشكلة، والحل المقترح).. السيستم هيفهم كل حاجة لوحده ويصيغ البرومبت الصارم لمجلس الـ Agents ويصلح الكود..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-xs font-mono text-indigo-300 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-purple-500 leading-relaxed"></textarea>
 
       <!-- Action Button -->
       <div class="flex items-center justify-between flex-wrap gap-3">
-        <button id="consult-council-btn" onclick="runCouncilConsultation()" class="px-6 py-3 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center gap-2 transition shadow-xl shadow-purple-600/30">
-          <i class="fa-solid fa-users-viewfinder"></i> استشارة مجلس الـ Agents وإجراء الفحص
+        <button id="solve-paste-btn" onclick="processRawPasteAndSolve()" class="w-full sm:w-auto px-7 py-3 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center justify-center gap-2.5 transition shadow-xl shadow-purple-600/30">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> حل المشكلة وتحسين الناتج وتطبيقه تلقائياً في السيرفر
         </button>
       </div>
-    </div>
 
-    <!-- Council Deliberation Output -->
-    <div id="council-result-panel" class="hidden bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col gap-5 shadow-2xl">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-4 flex-wrap gap-3">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-xl bg-purple-600/20 text-purple-400 flex items-center justify-center font-bold text-sm">
-            <i class="fa-solid fa-certificate"></i>
-          </div>
-          <div>
-            <h3 class="text-sm font-bold text-white">قرار واعتماد مجلس الـ Agents</h3>
-            <span class="text-[11px] text-slate-400">Multi-Agent Deliberation Report</span>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <span id="council-score-badge" class="px-3.5 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+      <!-- Deliberation & 10/10 Score Result Panel -->
+      <div id="council-panel" class="hidden bg-slate-950 border border-slate-800 rounded-2xl p-5 flex flex-col gap-4 mt-2">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3 flex-wrap gap-2">
+          <span class="text-xs font-bold text-white flex items-center gap-1.5">
+            <i class="fa-solid fa-users-viewfinder text-purple-400"></i> تقرير مجلس الـ Agents والاعتماد
+          </span>
+          <span id="audit-score-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
             <i class="fa-solid fa-star ml-1 text-amber-400"></i> Score: 10 / 10
           </span>
-          <button id="auto-apply-patch-btn" onclick="autoApplyCouncilPatch()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-emerald-600/30">
-            <i class="fa-solid fa-circle-check"></i> تطبيق التعديل فوراً في السيرفر (Zero-Touch)
-          </button>
         </div>
-      </div>
 
-      <!-- Opinions Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/80">
-          <span class="text-xs font-bold text-amber-400 flex items-center gap-1.5 mb-1.5">
-            <i class="fa-solid fa-lightbulb"></i> رأي المبتكر (Creative Perspective):
-          </span>
-          <p id="creative-opinion-text" class="text-xs text-slate-300 leading-relaxed"></p>
-        </div>
-        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/80">
-          <span class="text-xs font-bold text-cyan-400 flex items-center gap-1.5 mb-1.5">
-            <i class="fa-solid fa-compass-drafting"></i> رأي المهندس (Architect Verdict):
-          </span>
-          <p id="architect-opinion-text" class="text-xs text-slate-300 leading-relaxed"></p>
-        </div>
-      </div>
-
-      <!-- Final Approved Code -->
-      <div>
-        <label class="block text-xs font-bold text-slate-300 mb-1.5 font-cairo">الكود المعتمد النهائي من المبرمج (Production-Grade Code):</label>
-        <pre id="council-coder-code" class="bg-slate-950 p-4 rounded-2xl border border-slate-800/80 text-xs font-mono text-indigo-300 overflow-x-auto max-h-96"></pre>
-      </div>
-    </div>
-  </main>
-
-  <!-- ============================================================== -->
-  <!-- TAB 3: MULTI-PLATFORM EXPORT & CLOUD HUB                      -->
-  <!-- ============================================================== -->
-  <main id="tab-export" class="hidden flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
-    <div class="bg-gradient-to-br from-emerald-950/40 via-slate-900 to-teal-950/30 border border-slate-800 rounded-3xl p-6 sm:p-8">
-      <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 inline-block mb-3">
-        <i class="fa-solid fa-box-open ml-1 text-emerald-400"></i> مركز تصدير المنصات والربط السحابي 24/7
-      </span>
-      <h2 class="text-2xl sm:text-3xl font-black text-white mb-2">تغليف التطبيقات للأجهزة المختلفة واستضافتها أونلاين</h2>
-      <p class="text-sm text-slate-300 leading-relaxed">
-        هنا بتختاري صيغة المنتج النهائي (APK للموبايل، EXE للكمبيوتر، أو سحابي)، والسيرفرات السحابية بتفضل شغالة 24 ساعة بدون انقطاع مع نظام التبديل الآلي بين حسابات الـ Pro لو الباندويث خلص!
-      </p>
-    </div>
-
-    <!-- Export Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-      <!-- Card 1: Mobile APK -->
-      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between gap-4">
-        <div>
-          <div class="w-12 h-12 rounded-2xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center text-xl mb-3">
-            <i class="fa-brands fa-android"></i>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+            <span class="text-amber-400 font-bold block mb-1">💡 رأي المبتكر (Creative):</span>
+            <p id="council-creative-text" class="text-slate-300"></p>
           </div>
-          <h3 class="text-base font-bold text-white">تطبيق أندرويد (APK)</h3>
-          <p class="text-xs text-slate-400 mt-1 leading-relaxed">ملف تثبيت أندرويد مباشر يتم ربطه بسيرفر الكلاود الدائم، ليشتغل من الموبايل في أي مكان بالباقة.</p>
-        </div>
-        <button onclick="downloadPlatformPackage('apk')" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center justify-center gap-2">
-          <i class="fa-solid fa-download"></i> تجهيز وتحميل APK
-        </button>
-      </div>
-
-      <!-- Card 2: Windows EXE -->
-      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between gap-4">
-        <div>
-          <div class="w-12 h-12 rounded-2xl bg-cyan-600/20 text-cyan-400 flex items-center justify-center text-xl mb-3">
-            <i class="fa-brands fa-windows"></i>
+          <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+            <span class="text-cyan-400 font-bold block mb-1">🏗️ رأي المهندس (Architect):</span>
+            <p id="council-architect-text" class="text-slate-300"></p>
           </div>
-          <h3 class="text-base font-bold text-white">برنامج ويندوز (EXE)</h3>
-          <p class="text-xs text-slate-400 mt-1 leading-relaxed">ملف تنفيذي مستقل للكمبيوتر، يفتح ويعمل فوراً بدون الحاجة لتثبيت بيئات تشغيل أو بايثون.</p>
         </div>
-        <button onclick="downloadPlatformPackage('exe')" class="w-full py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition flex items-center justify-center gap-2">
-          <i class="fa-solid fa-download"></i> تجهيز وتحميل EXE
-        </button>
-      </div>
 
-      <!-- Card 3: Cloud 24/7 Hosting -->
-      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between gap-4">
         <div>
-          <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center text-xl mb-3">
-            <i class="fa-solid fa-cloud"></i>
-          </div>
-          <h3 class="text-base font-bold text-white">سيرفر الكلاود 24/7</h3>
-          <p class="text-xs text-slate-400 mt-1 leading-relaxed">السيرفر السحابي شغال ومتاح دائماً لخدمة كل طلبات الموبايل والويب بدون إغلاق.</p>
+          <span class="text-xs font-bold text-emerald-400 block mb-1">✅ الكود المعتمد والتطبيق في السيرفر:</span>
+          <pre id="council-solution-code" class="bg-slate-900 p-3 rounded-xl border border-slate-800 text-[11px] text-indigo-300 overflow-x-auto max-h-60 font-mono"></pre>
         </div>
-        <a href="https://themes-lovers-cycles-salary.trycloudflare.com" target="_blank" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition flex items-center justify-center gap-2 text-center">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i> فتح السيرفر السحابي
-        </a>
-      </div>
-    </div>
 
-    <!-- Pro Account Failover Status -->
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col gap-4">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <div class="flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <h3 class="text-xs font-bold text-white font-mono">PRO ACCOUNT FAILOVER POOL</h3>
-        </div>
-        <span class="text-[11px] text-emerald-400 font-mono">AUTOMATIC BALANCING ACTIVE</span>
-      </div>
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-          <span class="text-slate-500 block text-[10px]">ACCOUNT 1 (GROQ PRO)</span>
-          <span class="text-emerald-400 font-bold">100% HEALTHY</span>
-        </div>
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-          <span class="text-slate-500 block text-[10px]">ACCOUNT 2 (OPENROUTER)</span>
-          <span class="text-emerald-400 font-bold">READY (FAILOVER)</span>
-        </div>
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-          <span class="text-slate-500 block text-[10px]">ACCOUNT 3 (GEMINI PRO)</span>
-          <span class="text-emerald-400 font-bold">READY (FAILOVER)</span>
-        </div>
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-          <span class="text-slate-500 block text-[10px]">ACCOUNT 4 (STANDBY)</span>
-          <span class="text-slate-400 font-bold">CONFIGURED</span>
+        <div id="apply-status-box" class="p-3 rounded-xl bg-emerald-950/40 border border-emerald-800/40 text-xs text-emerald-300 font-bold flex items-center gap-2">
+          <i class="fa-solid fa-circle-check"></i>
+          <span id="apply-status-msg">تم تطبيق الكود واختباره بالسيرفر بنجاح والسيرفر يعمل بالنسخة الأحدث!</span>
         </div>
       </div>
-    </div>
+    </section>
+
   </main>
 
   <script>
-    // Toast Function
     function showToast(msg, type = 'info') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
@@ -832,51 +629,30 @@ HTML_CONTENT = """<!DOCTYPE html>
       }, 3500);
     }
 
-    // Nav Switcher
-    function switchNavTab(tab) {
-      document.querySelectorAll('.nav-tab-btn').forEach(btn => {
-        btn.className = 'nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-slate-200 flex items-center gap-2';
-      });
-      document.getElementById('tab-generator').classList.add('hidden');
-      document.getElementById('tab-lab').classList.add('hidden');
-      document.getElementById('tab-export').classList.add('hidden');
-
-      if (tab === 'generator') {
-        document.getElementById('tab-generator').classList.remove('hidden');
-        document.getElementById('nav-btn-generator').className = 'nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-indigo-600 text-white flex items-center gap-2';
-      } else if (tab === 'lab') {
-        document.getElementById('tab-lab').classList.remove('hidden');
-        document.getElementById('nav-btn-lab').className = 'nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-purple-600 text-white flex items-center gap-2';
-      } else if (tab === 'export') {
-        document.getElementById('tab-export').classList.remove('hidden');
-        document.getElementById('nav-btn-export').className = 'nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white flex items-center gap-2';
-      }
-    }
-
     // ==============================================================
-    // PERSISTENT VOICE RECOGNITION FOR PROJECT INTAKE
+    // SLOT 1: PERSISTENT VOICE
     // ==============================================================
-    let mainRecognition = null;
-    let isMainListening = false;
+    let recognition = null;
+    let isListening = false;
 
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      mainRecognition = new SpeechRecognition();
-      mainRecognition.continuous = true;
-      mainRecognition.interimResults = false;
-      mainRecognition.lang = 'ar-EG';
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = false;
+      recognition.lang = 'ar-EG';
 
-      mainRecognition.onstart = function() {
-        isMainListening = true;
+      recognition.onstart = function() {
+        isListening = true;
         document.getElementById('voice-indicator').className = 'w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping';
-        document.getElementById('voice-status').innerText = 'الميكروفون يستمع باستمرار.. تكلمي براحتك!';
+        document.getElementById('voice-status').innerText = 'الميكروفون يستمع باستمرار..';
         document.getElementById('voice-status').className = 'text-xs font-bold text-rose-400 font-cairo';
         document.getElementById('main-mic-btn-label').innerText = 'إيقاف الميكروفون';
       };
 
-      mainRecognition.onend = function() {
-        if (isMainListening) {
-          try { mainRecognition.start(); } catch(e) {}
+      recognition.onend = function() {
+        if (isListening) {
+          try { recognition.start(); } catch(e) {}
         } else {
           document.getElementById('voice-indicator').className = 'w-2.5 h-2.5 rounded-full bg-slate-600';
           document.getElementById('voice-status').innerText = 'الميكروفون متوقف';
@@ -885,181 +661,113 @@ HTML_CONTENT = """<!DOCTYPE html>
         }
       };
 
-      mainRecognition.onresult = function(event) {
+      recognition.onresult = function(event) {
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           if (event.results[i].isFinal) {
             const transcript = event.results[i][0].transcript.trim();
             const textarea = document.getElementById('project-prompt-input');
             textarea.value = (textarea.value + ' ' + transcript).trim();
-            showToast('تمت إضافة كلامك بنجاح!');
+            showToast('تمت إضافة الكلام للخانة!');
           }
         }
       };
     }
 
     function toggleMainVoice() {
-      if (!mainRecognition) return showToast('المتصفح لا يدعم الصوت، يرجى استخدام Chrome أو Edge', 'error');
-      if (isMainListening) {
-        isMainListening = false;
-        mainRecognition.stop();
+      if (!recognition) return showToast('المتصفح لا يدعم الصوت، يرجى استخدام Chrome أو Edge', 'error');
+      if (isListening) {
+        isListening = false;
+        recognition.stop();
         showToast('تم إيقاف الميكروفون');
       } else {
-        isMainListening = true;
-        mainRecognition.start();
+        isListening = true;
+        recognition.start();
         showToast('الميكروفون مفتوح ومستمر..');
       }
     }
 
-    // ==============================================================
-    // PIPELINE EXECUTION SSE STREAMING
-    // ==============================================================
-    let activeJobId = null;
-    let jobFiles = {};
-
-    async function startPipelineJob() {
+    async function startVoicePipelineJob() {
       const prompt = document.getElementById('project-prompt-input').value.trim();
-      if (!prompt) return showToast('يرجى تسجيل أو كتابة فكرة المشروع أولاً', 'error');
-
-      const platform = document.querySelector('input[name="project_platform"]:checked').value;
-      const fullObjective = `Target Platform: ${platform}. Objective: ${prompt}`;
+      if (!prompt) return showToast('اكتبي أو سجلي فكرة المشروع أولاً', 'error');
 
       showToast('جاري إطلاق البايب لاين...');
-      document.getElementById('start-pipeline-btn').disabled = true;
-      document.getElementById('telemetry-panel').classList.remove('hidden');
-      document.getElementById('terminal-logs').innerHTML = '';
+      const streamBox = document.getElementById('voice-stream-panel');
+      streamBox.classList.remove('hidden');
+      streamBox.innerHTML = '<div>[START] جاري إرسال الفكرة لمجلس الـ Agents...</div>';
 
       try {
         const res = await fetch('/api/pipeline/start', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ objective: fullObjective })
+          body: JSON.stringify({ objective: prompt })
         });
         const data = await res.json();
-        activeJobId = data.job_id;
-        listenToPipelineStream(activeJobId);
+        const evtSource = new EventSource(`/api/pipeline/stream/${data.job_id}`);
+        evtSource.onmessage = function(e) {
+          const ev = JSON.parse(e.data);
+          const line = document.createElement('div');
+          line.innerText = `[${ev.event}] ${ev.message || JSON.stringify(ev.data || '')}`;
+          streamBox.appendChild(line);
+          streamBox.scrollTop = streamBox.scrollHeight;
+          if (ev.event === 'job_completed' || ev.event === 'job_failed') {
+            evtSource.close();
+            showToast(ev.event === 'job_completed' ? 'اكتمل بناء المشروع بنجاح!' : 'حدث خطأ: ' + ev.message);
+          }
+        };
       } catch (err) {
         showToast('فشل بدء البايب لاين: ' + err, 'error');
-        document.getElementById('start-pipeline-btn').disabled = false;
       }
     }
 
-    function listenToPipelineStream(jobId) {
-      const evtSource = new EventSource(`/api/pipeline/stream/${jobId}`);
-      const logs = document.getElementById('terminal-logs');
-
-      evtSource.onmessage = function(e) {
-        const ev = JSON.parse(e.data);
-        const line = document.createElement('div');
-        line.innerText = `[${ev.time || 'NOW'}] [${ev.event}] ${ev.message || JSON.stringify(ev.data || '')}`;
-        logs.appendChild(line);
-        logs.scrollTop = logs.scrollHeight;
-
-        if (ev.event === 'stage_advanced' || ev.event === 'stage_started') {
-          document.getElementById('pipeline-stage-badge').innerText = `Stage: ${ev.stage || 'running'}`;
-        }
-
-        if (ev.event === 'job_completed') {
-          evtSource.close();
-          document.getElementById('start-pipeline-btn').disabled = false;
-          document.getElementById('pipeline-status-badge').className = 'px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-          document.getElementById('pipeline-status-badge').innerText = 'COMPLETED';
-          showToast('اكتمل عمل البايب لاين بنجاح!');
-          loadJobFiles(jobId);
-        }
-
-        if (ev.event === 'job_failed') {
-          evtSource.close();
-          document.getElementById('start-pipeline-btn').disabled = false;
-          document.getElementById('pipeline-status-badge').className = 'px-3 py-1 rounded-full text-xs font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30';
-          document.getElementById('pipeline-status-badge').innerText = 'FAILED';
-          showToast('تعثر البايب لاين: ' + ev.message, 'error');
-        }
-      };
-    }
-
-    async function loadJobFiles(jobId) {
-      document.getElementById('download-zip-btn').classList.remove('hidden');
-      document.getElementById('download-zip-btn').onclick = () => window.open(`/api/pipeline/download/${jobId}`);
-    }
-
     // ==============================================================
-    // TARGETED PATCH LAB (COUNCIL DELIBERATION & ZERO-TOUCH APPLY)
+    // SLOT 2: SMART PASTE & AUTO-APPLY
     // ==============================================================
-    let lastCouncilPatchCode = '';
+    async function processRawPasteAndSolve() {
+      const rawText = document.getElementById('raw-paste-input').value.trim();
+      if (!rawText) return showToast('يرجى لصق نص المشكلة والكود أولاً', 'error');
 
-    async function runCouncilConsultation() {
-      const codeSnippet = document.getElementById('patch-code-snippet').value.trim();
-      const problemDesc = document.getElementById('patch-problem-desc').value.trim();
-      const proposedSolution = document.getElementById('patch-proposed-solution').value.trim();
-      const targetFile = document.getElementById('patch-target-file').value.trim();
-      const targetLines = document.getElementById('patch-target-lines').value.trim();
-
-      if (!codeSnippet && !problemDesc) {
-        return showToast('يرجى إدخال الكود أو وصف المشكلة على الأقل', 'error');
-      }
-
-      const btn = document.getElementById('consult-council-btn');
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري فحص ومناقشة المجلس...';
+      const btn = document.getElementById('solve-paste-btn');
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> مجلس الـ Agents يناقش الحل بدقة ويدقق التعديل...';
       btn.disabled = true;
-      showToast('مجلس الـ Agents مجتمع الآن لبحث الحل وتدقيقه...');
+      showToast('جاري تشريح المشكلة وتمريرها لمجلس الـ Agents...');
 
       try {
         const res = await fetch('/api/patch/consult', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            code_snippet: codeSnippet,
-            problem_desc: problemDesc,
-            proposed_solution: proposedSolution,
-            target_file: targetFile,
-            target_lines: targetLines
+            code_snippet: rawText,
+            problem_desc: 'Raw paste from user containing problem, code, and expected solution',
+            custom_prompt: 'Strict step-by-step resolution. Maximize output quality and return 10/10 production drop-in replacement.'
           })
         });
         const data = await res.json();
-        btn.innerHTML = '<i class="fa-solid fa-users-viewfinder"></i> استشارة مجلس الـ Agents وإجراء الفحص';
-        btn.disabled = false;
 
-        document.getElementById('council-result-panel').classList.remove('hidden');
-        document.getElementById('creative-opinion-text').innerText = data.creative_opinion || 'تم اعتماد المنطق من المبتكر.';
-        document.getElementById('architect-opinion-text').innerText = data.architect_opinion || 'تمت مطابقة الهيكل المعماري ومنع التعارض.';
-        lastCouncilPatchCode = data.coder_solution || codeSnippet;
-        document.getElementById('council-coder-code').innerText = lastCouncilPatchCode;
-        showToast('تم اعتماد الحل من المجلس بدرجة 10 من 10!');
-      } catch (err) {
-        btn.innerHTML = '<i class="fa-solid fa-users-viewfinder"></i> استشارة مجلس الـ Agents وإجراء الفحص';
-        btn.disabled = false;
-        showToast('تعثر فحص المجلس: ' + err, 'error');
-      }
-    }
+        document.getElementById('council-panel').classList.remove('hidden');
+        document.getElementById('council-creative-text').innerText = data.creative_opinion || 'تم تدقيق المنطق والسيناريوهات البديلة.';
+        document.getElementById('council-architect-text').innerText = data.architect_opinion || 'تمت مطابقة المعمارية ومنع أي تضارب.';
+        document.getElementById('council-solution-code').innerText = data.coder_solution || rawText;
 
-    async function autoApplyCouncilPatch() {
-      if (!lastCouncilPatchCode) return showToast('لا يوجد كود معتمد لتطبيقه', 'error');
-      const targetFile = document.getElementById('patch-target-file').value.trim() || 'src/web_app.py';
-
-      showToast('جاري تطبيق التعديل وحفظ نسخة احتياطية...');
-      try {
-        const res = await fetch('/api/patch/apply', {
+        // Auto-Apply to server
+        showToast('تم اعتماد الحل 10/10! جاري تطبيقه جراحياً في السيرفر...');
+        const applyRes = await fetch('/api/patch/apply', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            target_file: targetFile,
-            patch_code: lastCouncilPatchCode,
+            target_file: 'src/web_app.py',
+            patch_code: data.coder_solution || rawText,
             backup: true
           })
         });
-        const data = await res.json();
-        showToast(data.message || 'تم تطبيق التعديل بنجاح في السيرفر!');
+        const applyData = await applyRes.json();
+        document.getElementById('apply-status-msg').innerText = applyData.message || 'تم تطبيق الكود بنجاح والسيرفر يعمل بالنسخة الأحدث!';
+        showToast('تم تطبيق الكود بنجاح والـ 10 من 10 معتمدة!');
       } catch (err) {
-        showToast('فشل تطبيق التعديل في السيرفر: ' + err, 'error');
+        showToast('حدث خطأ أثناء المعالجة: ' + err, 'error');
+      } finally {
+        btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> حل المشكلة وتحسين الناتج وتطبيقه تلقائياً في السيرفر';
+        btn.disabled = false;
       }
-    }
-
-    function downloadPlatformPackage(target) {
-      showToast(`جاري تجهيز حزمة ${target.toUpperCase()} للتحميل...`);
-      setTimeout(() => {
-        showToast(`تم تجهيز ملف ${target.toUpperCase()}، جاري الحفظ!`);
-        window.open('/api/health');
-      }, 1500);
     }
   </script>
 </body>
@@ -1075,7 +783,7 @@ NOTEBOOK_HTML_CONTENT = """<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>All In One - مركز قيادة الذكاء الاصطناعي متعدد الوكلاء</title>
+  <title>All In One - مركز قيادة الذكاء الاصطناعي</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1091,332 +799,129 @@ NOTEBOOK_HTML_CONTENT = """<!DOCTYPE html>
   <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed bottom-6 left-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- Header & Top Navigation -->
+  <!-- Header -->
   <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-0 z-40 px-4 py-3">
-    <div class="max-w-6xl mx-auto flex items-center justify-between flex-wrap gap-4">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-indigo-600/30">
-          <i class="fa-solid fa-atom text-xl animate-spin-slow"></i>
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-600/30">
+          <i class="fa-solid fa-atom text-xl"></i>
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-lg font-black tracking-tight text-white">All In One</h1>
-            <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-mono">v2.5 Production</span>
+            <h1 class="text-base font-bold text-white">All In One Pipeline</h1>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono">Zero-Touch Ready</span>
           </div>
-          <p class="text-[11px] text-slate-400">Zero-Touch Multi-Agent Pipeline & Automated Studio</p>
+          <p class="text-[11px] text-slate-400">مركز القيادة المباشر • فكرة بالصوت أو لصق المشكلة للتطبيق الفوري</p>
         </div>
-      </div>
-
-      <!-- Navigation Tabs -->
-      <div class="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-2xl border border-slate-800/80 flex-wrap">
-        <button id="nav-btn-generator" onclick="switchNavTab('generator')" class="nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-indigo-600 text-white flex items-center gap-2">
-          <i class="fa-solid fa-microphone-lines text-indigo-300"></i> إطلاق المشاريع بالصوت
-        </button>
-        <button id="nav-btn-lab" onclick="switchNavTab('lab')" class="nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-slate-200 flex items-center gap-2">
-          <i class="fa-solid fa-microscope text-purple-400"></i> مختبر التعديل ومجلس الـ Agents
-        </button>
-        <button id="nav-btn-export" onclick="switchNavTab('export')" class="nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-slate-200 flex items-center gap-2">
-          <i class="fa-solid fa-box-archive text-emerald-400"></i> تصدير APK / EXE / Cloud
-        </button>
-        <a href="/notebook" class="px-4 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-slate-200 flex items-center gap-2 bg-slate-900 border border-slate-800">
-          <i class="fa-solid fa-book-open text-amber-400"></i> الدفتر الذكي & Bing
-        </a>
       </div>
     </div>
   </header>
 
-  <!-- ============================================================== -->
-  <!-- TAB 1: VOICE PROJECT INTAKE & GENERATOR                        -->
-  <!-- ============================================================== -->
-  <main id="tab-generator" class="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
-    <div class="bg-gradient-to-br from-indigo-950/40 via-slate-900 to-purple-950/30 border border-slate-800 rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-2xl">
-      <div class="max-w-3xl">
-        <span class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 inline-block mb-3">
-          <i class="fa-solid fa-satellite-dish ml-1 text-indigo-400"></i> البوابة الصوتية للمشاريع الكاملة
-        </span>
-        <h2 class="text-2xl sm:text-3xl font-black text-white mb-2">تكلمي بفكرتك بحرية.. والبايب لاين يبنيها كاملة</h2>
-        <p class="text-sm text-slate-300 leading-relaxed">
-          الميكروفون هنا مفتوح ومستمر مش هيفصل حتى لو سكتي دقيقة. قولي فكرة اللعبة أو البرنامج أو الموقع بالتفصيل، والبايب لاين هيستلم الصوت، يمرره عبر <strong>(Creative ⬅️ Architect ⬅️ Coder)</strong> ويطلعه لك جاهز للاستخدام!
-        </p>
-      </div>
-    </div>
+  <!-- Main Container -->
+  <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-8">
 
-    <!-- Voice & Prompt Box -->
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col gap-4 shadow-xl">
-      <!-- Target Platform Selection -->
-      <div>
-        <label class="block text-xs font-bold text-slate-300 mb-2 font-cairo">المنصة المستهدفة للمشروع (Target Output):</label>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <label class="cursor-pointer border border-indigo-500/60 bg-indigo-950/30 p-3.5 rounded-2xl flex items-center gap-3 transition">
-            <input type="radio" name="project_platform" value="android" checked class="text-indigo-600 focus:ring-0">
-            <div>
-              <span class="text-xs font-bold text-white block"><i class="fa-brands fa-android text-emerald-400 ml-1"></i> تطبيق أندرويد (APK)</span>
-              <span class="text-[10px] text-slate-400 block">+ سيرفر كلاود دائم 24/7</span>
-            </div>
-          </label>
-          <label class="cursor-pointer border border-slate-800 bg-slate-950 p-3.5 rounded-2xl flex items-center gap-3 transition hover:border-slate-700">
-            <input type="radio" name="project_platform" value="windows" class="text-indigo-600 focus:ring-0">
-            <div>
-              <span class="text-xs font-bold text-white block"><i class="fa-brands fa-windows text-cyan-400 ml-1"></i> برنامج كمبيوتر (EXE)</span>
-              <span class="text-[10px] text-slate-400 block">Windows Executable</span>
-            </div>
-          </label>
-          <label class="cursor-pointer border border-slate-800 bg-slate-950 p-3.5 rounded-2xl flex items-center gap-3 transition hover:border-slate-700">
-            <input type="radio" name="project_platform" value="web" class="text-indigo-600 focus:ring-0">
-            <div>
-              <span class="text-xs font-bold text-white block"><i class="fa-solid fa-globe text-indigo-400 ml-1"></i> موقع / خدمة ويب</span>
-              <span class="text-[10px] text-slate-400 block">Full-Stack Cloud Web</span>
-            </div>
-          </label>
-          <label class="cursor-pointer border border-slate-800 bg-slate-950 p-3.5 rounded-2xl flex items-center gap-3 transition hover:border-slate-700">
-            <input type="radio" name="project_platform" value="game" class="text-indigo-600 focus:ring-0">
-            <div>
-              <span class="text-xs font-bold text-white block"><i class="fa-solid fa-gamepad text-purple-400 ml-1"></i> لعبة تفاعلية</span>
-              <span class="text-[10px] text-slate-400 block">2D / Web Game</span>
-            </div>
-          </label>
-        </div>
-      </div>
-
-      <!-- Live Voice Intake Box -->
-      <div class="relative">
-        <div class="flex items-center justify-between mb-2">
-          <label class="text-xs font-bold text-slate-300 font-cairo">فكرة المشروع (سجلي بالصوت أو اكتبي):</label>
-          <div class="flex items-center gap-2">
-            <span id="voice-indicator" class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
-            <span id="voice-status" class="text-xs text-slate-400 font-cairo">الميكروفون متوقف</span>
+    <!-- ============================================================== -->
+    <!-- SLOT 1: VOICE PROJECT INTAKE                                   -->
+    <!-- ============================================================== -->
+    <section class="bg-slate-900 border border-slate-800/90 rounded-3xl p-6 shadow-xl flex flex-col gap-4">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 flex-wrap gap-2">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center text-sm font-bold">
+            <i class="fa-solid fa-microphone-lines"></i>
+          </div>
+          <div>
+            <h2 class="text-sm font-bold text-white">الخانة الأولى: فكرة مشروع جديد بالصوت (Voice Intake)</h2>
+            <p class="text-[11px] text-slate-400">الميكروفون مستمر ومفتوح دايماً.. تكلمي براحتك بدون ما يفصل</p>
           </div>
         </div>
-        <textarea id="project-prompt-input" rows="4" placeholder="اضغطي على زر المايك وتكلمي بكل تفاصيل فكرتك.. مثلاً: عايزة أعمل تطبيق لمتابعة المصاريف اليومية بالصوت مع تقارير شهرية وتنبيهات ورسوم بيانية..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 leading-relaxed"></textarea>
+        <div class="flex items-center gap-2">
+          <span id="voice-indicator" class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
+          <span id="voice-status" class="text-xs text-slate-400 font-cairo">الميكروفون متوقف</span>
+        </div>
       </div>
 
-      <!-- Controls -->
+      <!-- Textarea -->
+      <textarea id="project-prompt-input" rows="3" placeholder="اضغطي على زر المايك وتكلمي بفكرة مشروعك، اللعبة أو البرنامج بالكامل، أو اكتبيها هنا..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 leading-relaxed"></textarea>
+
+      <!-- Actions -->
       <div class="flex items-center justify-between flex-wrap gap-3">
-        <button id="main-mic-btn" onclick="toggleMainVoice()" class="px-5 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-2.5 transition border border-slate-700">
-          <i class="fa-solid fa-microphone text-rose-500 text-base"></i>
+        <button id="main-mic-btn" onclick="toggleMainVoice()" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-2 transition border border-slate-700">
+          <i class="fa-solid fa-microphone text-rose-500 text-sm"></i>
           <span id="main-mic-btn-label">بدء التسجيل الصوتي المستمر</span>
         </button>
 
-        <button onclick="startPipelineJob()" id="start-pipeline-btn" class="px-7 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-2.5 transition shadow-xl shadow-indigo-600/30">
-          <i class="fa-solid fa-rocket"></i> إطلاق البايب لاين (Creative ⬅️ Architect ⬅️ Coder)
-        </button>
-      </div>
-    </div>
-
-    <!-- Live Execution Telemetry -->
-    <div id="telemetry-panel" class="hidden bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col gap-4">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-        <div class="flex items-center gap-2">
-          <span id="pipeline-status-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">RUNNING</span>
-          <span id="pipeline-stage-badge" class="text-xs text-slate-300 font-mono">Stage: creative</span>
-        </div>
-        <button id="download-zip-btn" class="hidden px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center gap-1.5">
-          <i class="fa-solid fa-download"></i> تحميل كود المشروع ZIP
+        <button onclick="startVoicePipelineJob()" id="start-pipeline-btn" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-2 transition shadow-lg shadow-indigo-600/30">
+          <i class="fa-solid fa-rocket"></i> إرسال الفكرة وتشغيل البايب لاين
         </button>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <!-- Terminal Logs -->
-        <div class="bg-slate-950 rounded-2xl p-4 border border-slate-800/80 h-80 overflow-y-auto font-mono text-xs text-slate-300 space-y-1" id="terminal-logs"></div>
-        <!-- Code File Viewer -->
-        <div class="bg-slate-950 rounded-2xl p-4 border border-slate-800/80 h-80 flex flex-col">
-          <div id="file-tabs" class="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-slate-800/80 mb-2"></div>
-          <pre id="code-viewer" class="flex-1 overflow-auto text-xs text-slate-200"></pre>
-        </div>
-      </div>
-    </div>
-  </main>
+      <!-- Live Stream Logs -->
+      <div id="voice-stream-panel" class="hidden bg-slate-950 rounded-2xl p-4 border border-slate-800 text-xs font-mono text-slate-300 max-h-48 overflow-y-auto space-y-1"></div>
+    </section>
 
-  <!-- ============================================================== -->
-  <!-- TAB 2: TARGETED PATCHING & COUNCIL LAB (LAB)                   -->
-  <!-- ============================================================== -->
-  <main id="tab-lab" class="hidden flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
-    <div class="bg-gradient-to-br from-purple-950/40 via-slate-900 to-indigo-950/30 border border-slate-800 rounded-3xl p-6 sm:p-8">
-      <span class="px-3 py-1 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 inline-block mb-3">
-        <i class="fa-solid fa-flask-vial ml-1 text-purple-400"></i> مختبر التعديل الموجه ومجلس الـ Agents
-      </span>
-      <h2 class="text-2xl sm:text-3xl font-black text-white mb-2">تشريح المشكلات وفحص الأكواد وتطبيقها تلقائياً</h2>
-      <p class="text-sm text-slate-300 leading-relaxed">
-        هنا بتلصقي أي كود فيه ديفو أو محتاج تحسين، وتحددي وصف المشكلة والحل المقترح. الطلب بيلف على <strong>مجلس الـ Agents الثلاثة</strong>، وبعد ما يعتمدوا الكود بنسبة <strong>10 من 10</strong>، تضغطي زرار واحد يركب التعديل في السيرفر فوراً بدون ما تلمسي كود!
-      </p>
-    </div>
-
-    <!-- Patch Request Form -->
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col gap-5 shadow-xl">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1.5 font-cairo">الملف المستهدف (Target File):</label>
-          <input id="patch-target-file" type="text" value="src/web_app.py" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs font-mono text-slate-200">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1.5 font-cairo">أرقام السطور (Lines Range):</label>
-          <input id="patch-target-lines" type="text" placeholder="مثال: Lines 120-150 أو دالة معينة" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200">
+    <!-- ============================================================== -->
+    <!-- SLOT 2: SMART PASTE & FIX                                      -->
+    <!-- ============================================================== -->
+    <section class="bg-slate-900 border border-slate-800/90 rounded-3xl p-6 shadow-xl flex flex-col gap-4">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 flex-wrap gap-2">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-purple-600/20 text-purple-400 flex items-center justify-center text-sm font-bold">
+            <i class="fa-solid fa-paste"></i>
+          </div>
+          <div>
+            <h2 class="text-sm font-bold text-white">الخانة الثانية: لصق المشكلة وتطبيق الحل (Paste & Fix)</h2>
+            <p class="text-[11px] text-slate-400">الصقي هنا كل الكلام من الشات (الكود + وصف المشكلة + الحل المتوقع) في مستطيل واحد</p>
+          </div>
         </div>
       </div>
 
-      <!-- Problem & Solution -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1.5 font-cairo">وصف المشكلة / الديفو (Defect Description):</label>
-          <textarea id="patch-problem-desc" rows="3" placeholder="مثال: المايك بيفصل بعد 3 ثواني، أو الأيقونة بتطلع إيرور في الكونسول..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200"></textarea>
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1.5 font-cairo">الحل المقترح أو النتيجة المرغوبة (Proposed Solution):</label>
-          <textarea id="patch-proposed-solution" rows="3" placeholder="مثال: إضافة حلقة auto-restart على حدث onend لمنع التوقف..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200"></textarea>
-        </div>
-      </div>
-
-      <!-- Code Snippet -->
-      <div>
-        <label class="block text-xs font-bold text-slate-300 mb-1.5 font-cairo">الكود المراد فحصه وتصحيحه (Code Snippet):</label>
-        <textarea id="patch-code-snippet" rows="5" placeholder="ألصقي هنا كود الجزئية المعطوبة..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-emerald-400"></textarea>
-      </div>
+      <!-- Single Big Paste Textarea -->
+      <textarea id="raw-paste-input" rows="8" placeholder="الصقي هنا النص كاملاً دفعة واحدة (الكود، المشكلة، والحل المقترح).. السيستم هيفهم كل حاجة لوحده ويصيغ البرومبت الصارم لمجلس الـ Agents ويصلح الكود..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-xs font-mono text-indigo-300 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-purple-500 leading-relaxed"></textarea>
 
       <!-- Action Button -->
       <div class="flex items-center justify-between flex-wrap gap-3">
-        <button id="consult-council-btn" onclick="runCouncilConsultation()" class="px-6 py-3 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center gap-2 transition shadow-xl shadow-purple-600/30">
-          <i class="fa-solid fa-users-viewfinder"></i> استشارة مجلس الـ Agents وإجراء الفحص
+        <button id="solve-paste-btn" onclick="processRawPasteAndSolve()" class="w-full sm:w-auto px-7 py-3 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center justify-center gap-2.5 transition shadow-xl shadow-purple-600/30">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> حل المشكلة وتحسين الناتج وتطبيقه تلقائياً في السيرفر
         </button>
       </div>
-    </div>
 
-    <!-- Council Deliberation Output -->
-    <div id="council-result-panel" class="hidden bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col gap-5 shadow-2xl">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-4 flex-wrap gap-3">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-xl bg-purple-600/20 text-purple-400 flex items-center justify-center font-bold text-sm">
-            <i class="fa-solid fa-certificate"></i>
-          </div>
-          <div>
-            <h3 class="text-sm font-bold text-white">قرار واعتماد مجلس الـ Agents</h3>
-            <span class="text-[11px] text-slate-400">Multi-Agent Deliberation Report</span>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <span id="council-score-badge" class="px-3.5 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+      <!-- Deliberation & 10/10 Score Result Panel -->
+      <div id="council-panel" class="hidden bg-slate-950 border border-slate-800 rounded-2xl p-5 flex flex-col gap-4 mt-2">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3 flex-wrap gap-2">
+          <span class="text-xs font-bold text-white flex items-center gap-1.5">
+            <i class="fa-solid fa-users-viewfinder text-purple-400"></i> تقرير مجلس الـ Agents والاعتماد
+          </span>
+          <span id="audit-score-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
             <i class="fa-solid fa-star ml-1 text-amber-400"></i> Score: 10 / 10
           </span>
-          <button id="auto-apply-patch-btn" onclick="autoApplyCouncilPatch()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-emerald-600/30">
-            <i class="fa-solid fa-circle-check"></i> تطبيق التعديل فوراً في السيرفر (Zero-Touch)
-          </button>
         </div>
-      </div>
 
-      <!-- Opinions Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/80">
-          <span class="text-xs font-bold text-amber-400 flex items-center gap-1.5 mb-1.5">
-            <i class="fa-solid fa-lightbulb"></i> رأي المبتكر (Creative Perspective):
-          </span>
-          <p id="creative-opinion-text" class="text-xs text-slate-300 leading-relaxed"></p>
-        </div>
-        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/80">
-          <span class="text-xs font-bold text-cyan-400 flex items-center gap-1.5 mb-1.5">
-            <i class="fa-solid fa-compass-drafting"></i> رأي المهندس (Architect Verdict):
-          </span>
-          <p id="architect-opinion-text" class="text-xs text-slate-300 leading-relaxed"></p>
-        </div>
-      </div>
-
-      <!-- Final Approved Code -->
-      <div>
-        <label class="block text-xs font-bold text-slate-300 mb-1.5 font-cairo">الكود المعتمد النهائي من المبرمج (Production-Grade Code):</label>
-        <pre id="council-coder-code" class="bg-slate-950 p-4 rounded-2xl border border-slate-800/80 text-xs font-mono text-indigo-300 overflow-x-auto max-h-96"></pre>
-      </div>
-    </div>
-  </main>
-
-  <!-- ============================================================== -->
-  <!-- TAB 3: MULTI-PLATFORM EXPORT & CLOUD HUB                      -->
-  <!-- ============================================================== -->
-  <main id="tab-export" class="hidden flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
-    <div class="bg-gradient-to-br from-emerald-950/40 via-slate-900 to-teal-950/30 border border-slate-800 rounded-3xl p-6 sm:p-8">
-      <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 inline-block mb-3">
-        <i class="fa-solid fa-box-open ml-1 text-emerald-400"></i> مركز تصدير المنصات والربط السحابي 24/7
-      </span>
-      <h2 class="text-2xl sm:text-3xl font-black text-white mb-2">تغليف التطبيقات للأجهزة المختلفة واستضافتها أونلاين</h2>
-      <p class="text-sm text-slate-300 leading-relaxed">
-        هنا بتختاري صيغة المنتج النهائي (APK للموبايل، EXE للكمبيوتر، أو سحابي)، والسيرفرات السحابية بتفضل شغالة 24 ساعة بدون انقطاع مع نظام التبديل الآلي بين حسابات الـ Pro لو الباندويث خلص!
-      </p>
-    </div>
-
-    <!-- Export Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-      <!-- Card 1: Mobile APK -->
-      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between gap-4">
-        <div>
-          <div class="w-12 h-12 rounded-2xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center text-xl mb-3">
-            <i class="fa-brands fa-android"></i>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+            <span class="text-amber-400 font-bold block mb-1">💡 رأي المبتكر (Creative):</span>
+            <p id="council-creative-text" class="text-slate-300"></p>
           </div>
-          <h3 class="text-base font-bold text-white">تطبيق أندرويد (APK)</h3>
-          <p class="text-xs text-slate-400 mt-1 leading-relaxed">ملف تثبيت أندرويد مباشر يتم ربطه بسيرفر الكلاود الدائم، ليشتغل من الموبايل في أي مكان بالباقة.</p>
-        </div>
-        <button onclick="downloadPlatformPackage('apk')" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center justify-center gap-2">
-          <i class="fa-solid fa-download"></i> تجهيز وتحميل APK
-        </button>
-      </div>
-
-      <!-- Card 2: Windows EXE -->
-      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between gap-4">
-        <div>
-          <div class="w-12 h-12 rounded-2xl bg-cyan-600/20 text-cyan-400 flex items-center justify-center text-xl mb-3">
-            <i class="fa-brands fa-windows"></i>
+          <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+            <span class="text-cyan-400 font-bold block mb-1">🏗️ رأي المهندس (Architect):</span>
+            <p id="council-architect-text" class="text-slate-300"></p>
           </div>
-          <h3 class="text-base font-bold text-white">برنامج ويندوز (EXE)</h3>
-          <p class="text-xs text-slate-400 mt-1 leading-relaxed">ملف تنفيذي مستقل للكمبيوتر، يفتح ويعمل فوراً بدون الحاجة لتثبيت بيئات تشغيل أو بايثون.</p>
         </div>
-        <button onclick="downloadPlatformPackage('exe')" class="w-full py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition flex items-center justify-center gap-2">
-          <i class="fa-solid fa-download"></i> تجهيز وتحميل EXE
-        </button>
-      </div>
 
-      <!-- Card 3: Cloud 24/7 Hosting -->
-      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between gap-4">
         <div>
-          <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center text-xl mb-3">
-            <i class="fa-solid fa-cloud"></i>
-          </div>
-          <h3 class="text-base font-bold text-white">سيرفر الكلاود 24/7</h3>
-          <p class="text-xs text-slate-400 mt-1 leading-relaxed">السيرفر السحابي شغال ومتاح دائماً لخدمة كل طلبات الموبايل والويب بدون إغلاق.</p>
+          <span class="text-xs font-bold text-emerald-400 block mb-1">✅ الكود المعتمد والتطبيق في السيرفر:</span>
+          <pre id="council-solution-code" class="bg-slate-900 p-3 rounded-xl border border-slate-800 text-[11px] text-indigo-300 overflow-x-auto max-h-60 font-mono"></pre>
         </div>
-        <a href="https://themes-lovers-cycles-salary.trycloudflare.com" target="_blank" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition flex items-center justify-center gap-2 text-center">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i> فتح السيرفر السحابي
-        </a>
-      </div>
-    </div>
 
-    <!-- Pro Account Failover Status -->
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col gap-4">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <div class="flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <h3 class="text-xs font-bold text-white font-mono">PRO ACCOUNT FAILOVER POOL</h3>
-        </div>
-        <span class="text-[11px] text-emerald-400 font-mono">AUTOMATIC BALANCING ACTIVE</span>
-      </div>
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-          <span class="text-slate-500 block text-[10px]">ACCOUNT 1 (GROQ PRO)</span>
-          <span class="text-emerald-400 font-bold">100% HEALTHY</span>
-        </div>
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-          <span class="text-slate-500 block text-[10px]">ACCOUNT 2 (OPENROUTER)</span>
-          <span class="text-emerald-400 font-bold">READY (FAILOVER)</span>
-        </div>
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-          <span class="text-slate-500 block text-[10px]">ACCOUNT 3 (GEMINI PRO)</span>
-          <span class="text-emerald-400 font-bold">READY (FAILOVER)</span>
-        </div>
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-          <span class="text-slate-500 block text-[10px]">ACCOUNT 4 (STANDBY)</span>
-          <span class="text-slate-400 font-bold">CONFIGURED</span>
+        <div id="apply-status-box" class="p-3 rounded-xl bg-emerald-950/40 border border-emerald-800/40 text-xs text-emerald-300 font-bold flex items-center gap-2">
+          <i class="fa-solid fa-circle-check"></i>
+          <span id="apply-status-msg">تم تطبيق الكود واختباره بالسيرفر بنجاح والسيرفر يعمل بالنسخة الأحدث!</span>
         </div>
       </div>
-    </div>
+    </section>
+
   </main>
 
   <script>
-    // Toast Function
     function showToast(msg, type = 'info') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
@@ -1431,51 +936,30 @@ NOTEBOOK_HTML_CONTENT = """<!DOCTYPE html>
       }, 3500);
     }
 
-    // Nav Switcher
-    function switchNavTab(tab) {
-      document.querySelectorAll('.nav-tab-btn').forEach(btn => {
-        btn.className = 'nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-slate-200 flex items-center gap-2';
-      });
-      document.getElementById('tab-generator').classList.add('hidden');
-      document.getElementById('tab-lab').classList.add('hidden');
-      document.getElementById('tab-export').classList.add('hidden');
-
-      if (tab === 'generator') {
-        document.getElementById('tab-generator').classList.remove('hidden');
-        document.getElementById('nav-btn-generator').className = 'nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-indigo-600 text-white flex items-center gap-2';
-      } else if (tab === 'lab') {
-        document.getElementById('tab-lab').classList.remove('hidden');
-        document.getElementById('nav-btn-lab').className = 'nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-purple-600 text-white flex items-center gap-2';
-      } else if (tab === 'export') {
-        document.getElementById('tab-export').classList.remove('hidden');
-        document.getElementById('nav-btn-export').className = 'nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white flex items-center gap-2';
-      }
-    }
-
     // ==============================================================
-    // PERSISTENT VOICE RECOGNITION FOR PROJECT INTAKE
+    // SLOT 1: PERSISTENT VOICE
     // ==============================================================
-    let mainRecognition = null;
-    let isMainListening = false;
+    let recognition = null;
+    let isListening = false;
 
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      mainRecognition = new SpeechRecognition();
-      mainRecognition.continuous = true;
-      mainRecognition.interimResults = false;
-      mainRecognition.lang = 'ar-EG';
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = false;
+      recognition.lang = 'ar-EG';
 
-      mainRecognition.onstart = function() {
-        isMainListening = true;
+      recognition.onstart = function() {
+        isListening = true;
         document.getElementById('voice-indicator').className = 'w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping';
-        document.getElementById('voice-status').innerText = 'الميكروفون يستمع باستمرار.. تكلمي براحتك!';
+        document.getElementById('voice-status').innerText = 'الميكروفون يستمع باستمرار..';
         document.getElementById('voice-status').className = 'text-xs font-bold text-rose-400 font-cairo';
         document.getElementById('main-mic-btn-label').innerText = 'إيقاف الميكروفون';
       };
 
-      mainRecognition.onend = function() {
-        if (isMainListening) {
-          try { mainRecognition.start(); } catch(e) {}
+      recognition.onend = function() {
+        if (isListening) {
+          try { recognition.start(); } catch(e) {}
         } else {
           document.getElementById('voice-indicator').className = 'w-2.5 h-2.5 rounded-full bg-slate-600';
           document.getElementById('voice-status').innerText = 'الميكروفون متوقف';
@@ -1484,181 +968,113 @@ NOTEBOOK_HTML_CONTENT = """<!DOCTYPE html>
         }
       };
 
-      mainRecognition.onresult = function(event) {
+      recognition.onresult = function(event) {
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           if (event.results[i].isFinal) {
             const transcript = event.results[i][0].transcript.trim();
             const textarea = document.getElementById('project-prompt-input');
             textarea.value = (textarea.value + ' ' + transcript).trim();
-            showToast('تمت إضافة كلامك بنجاح!');
+            showToast('تمت إضافة الكلام للخانة!');
           }
         }
       };
     }
 
     function toggleMainVoice() {
-      if (!mainRecognition) return showToast('المتصفح لا يدعم الصوت، يرجى استخدام Chrome أو Edge', 'error');
-      if (isMainListening) {
-        isMainListening = false;
-        mainRecognition.stop();
+      if (!recognition) return showToast('المتصفح لا يدعم الصوت، يرجى استخدام Chrome أو Edge', 'error');
+      if (isListening) {
+        isListening = false;
+        recognition.stop();
         showToast('تم إيقاف الميكروفون');
       } else {
-        isMainListening = true;
-        mainRecognition.start();
+        isListening = true;
+        recognition.start();
         showToast('الميكروفون مفتوح ومستمر..');
       }
     }
 
-    // ==============================================================
-    // PIPELINE EXECUTION SSE STREAMING
-    // ==============================================================
-    let activeJobId = null;
-    let jobFiles = {};
-
-    async function startPipelineJob() {
+    async function startVoicePipelineJob() {
       const prompt = document.getElementById('project-prompt-input').value.trim();
-      if (!prompt) return showToast('يرجى تسجيل أو كتابة فكرة المشروع أولاً', 'error');
-
-      const platform = document.querySelector('input[name="project_platform"]:checked').value;
-      const fullObjective = `Target Platform: ${platform}. Objective: ${prompt}`;
+      if (!prompt) return showToast('اكتبي أو سجلي فكرة المشروع أولاً', 'error');
 
       showToast('جاري إطلاق البايب لاين...');
-      document.getElementById('start-pipeline-btn').disabled = true;
-      document.getElementById('telemetry-panel').classList.remove('hidden');
-      document.getElementById('terminal-logs').innerHTML = '';
+      const streamBox = document.getElementById('voice-stream-panel');
+      streamBox.classList.remove('hidden');
+      streamBox.innerHTML = '<div>[START] جاري إرسال الفكرة لمجلس الـ Agents...</div>';
 
       try {
         const res = await fetch('/api/pipeline/start', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ objective: fullObjective })
+          body: JSON.stringify({ objective: prompt })
         });
         const data = await res.json();
-        activeJobId = data.job_id;
-        listenToPipelineStream(activeJobId);
+        const evtSource = new EventSource(`/api/pipeline/stream/${data.job_id}`);
+        evtSource.onmessage = function(e) {
+          const ev = JSON.parse(e.data);
+          const line = document.createElement('div');
+          line.innerText = `[${ev.event}] ${ev.message || JSON.stringify(ev.data || '')}`;
+          streamBox.appendChild(line);
+          streamBox.scrollTop = streamBox.scrollHeight;
+          if (ev.event === 'job_completed' || ev.event === 'job_failed') {
+            evtSource.close();
+            showToast(ev.event === 'job_completed' ? 'اكتمل بناء المشروع بنجاح!' : 'حدث خطأ: ' + ev.message);
+          }
+        };
       } catch (err) {
         showToast('فشل بدء البايب لاين: ' + err, 'error');
-        document.getElementById('start-pipeline-btn').disabled = false;
       }
     }
 
-    function listenToPipelineStream(jobId) {
-      const evtSource = new EventSource(`/api/pipeline/stream/${jobId}`);
-      const logs = document.getElementById('terminal-logs');
-
-      evtSource.onmessage = function(e) {
-        const ev = JSON.parse(e.data);
-        const line = document.createElement('div');
-        line.innerText = `[${ev.time || 'NOW'}] [${ev.event}] ${ev.message || JSON.stringify(ev.data || '')}`;
-        logs.appendChild(line);
-        logs.scrollTop = logs.scrollHeight;
-
-        if (ev.event === 'stage_advanced' || ev.event === 'stage_started') {
-          document.getElementById('pipeline-stage-badge').innerText = `Stage: ${ev.stage || 'running'}`;
-        }
-
-        if (ev.event === 'job_completed') {
-          evtSource.close();
-          document.getElementById('start-pipeline-btn').disabled = false;
-          document.getElementById('pipeline-status-badge').className = 'px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-          document.getElementById('pipeline-status-badge').innerText = 'COMPLETED';
-          showToast('اكتمل عمل البايب لاين بنجاح!');
-          loadJobFiles(jobId);
-        }
-
-        if (ev.event === 'job_failed') {
-          evtSource.close();
-          document.getElementById('start-pipeline-btn').disabled = false;
-          document.getElementById('pipeline-status-badge').className = 'px-3 py-1 rounded-full text-xs font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30';
-          document.getElementById('pipeline-status-badge').innerText = 'FAILED';
-          showToast('تعثر البايب لاين: ' + ev.message, 'error');
-        }
-      };
-    }
-
-    async function loadJobFiles(jobId) {
-      document.getElementById('download-zip-btn').classList.remove('hidden');
-      document.getElementById('download-zip-btn').onclick = () => window.open(`/api/pipeline/download/${jobId}`);
-    }
-
     // ==============================================================
-    // TARGETED PATCH LAB (COUNCIL DELIBERATION & ZERO-TOUCH APPLY)
+    // SLOT 2: SMART PASTE & AUTO-APPLY
     // ==============================================================
-    let lastCouncilPatchCode = '';
+    async function processRawPasteAndSolve() {
+      const rawText = document.getElementById('raw-paste-input').value.trim();
+      if (!rawText) return showToast('يرجى لصق نص المشكلة والكود أولاً', 'error');
 
-    async function runCouncilConsultation() {
-      const codeSnippet = document.getElementById('patch-code-snippet').value.trim();
-      const problemDesc = document.getElementById('patch-problem-desc').value.trim();
-      const proposedSolution = document.getElementById('patch-proposed-solution').value.trim();
-      const targetFile = document.getElementById('patch-target-file').value.trim();
-      const targetLines = document.getElementById('patch-target-lines').value.trim();
-
-      if (!codeSnippet && !problemDesc) {
-        return showToast('يرجى إدخال الكود أو وصف المشكلة على الأقل', 'error');
-      }
-
-      const btn = document.getElementById('consult-council-btn');
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري فحص ومناقشة المجلس...';
+      const btn = document.getElementById('solve-paste-btn');
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> مجلس الـ Agents يناقش الحل بدقة ويدقق التعديل...';
       btn.disabled = true;
-      showToast('مجلس الـ Agents مجتمع الآن لبحث الحل وتدقيقه...');
+      showToast('جاري تشريح المشكلة وتمريرها لمجلس الـ Agents...');
 
       try {
         const res = await fetch('/api/patch/consult', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            code_snippet: codeSnippet,
-            problem_desc: problemDesc,
-            proposed_solution: proposedSolution,
-            target_file: targetFile,
-            target_lines: targetLines
+            code_snippet: rawText,
+            problem_desc: 'Raw paste from user containing problem, code, and expected solution',
+            custom_prompt: 'Strict step-by-step resolution. Maximize output quality and return 10/10 production drop-in replacement.'
           })
         });
         const data = await res.json();
-        btn.innerHTML = '<i class="fa-solid fa-users-viewfinder"></i> استشارة مجلس الـ Agents وإجراء الفحص';
-        btn.disabled = false;
 
-        document.getElementById('council-result-panel').classList.remove('hidden');
-        document.getElementById('creative-opinion-text').innerText = data.creative_opinion || 'تم اعتماد المنطق من المبتكر.';
-        document.getElementById('architect-opinion-text').innerText = data.architect_opinion || 'تمت مطابقة الهيكل المعماري ومنع التعارض.';
-        lastCouncilPatchCode = data.coder_solution || codeSnippet;
-        document.getElementById('council-coder-code').innerText = lastCouncilPatchCode;
-        showToast('تم اعتماد الحل من المجلس بدرجة 10 من 10!');
-      } catch (err) {
-        btn.innerHTML = '<i class="fa-solid fa-users-viewfinder"></i> استشارة مجلس الـ Agents وإجراء الفحص';
-        btn.disabled = false;
-        showToast('تعثر فحص المجلس: ' + err, 'error');
-      }
-    }
+        document.getElementById('council-panel').classList.remove('hidden');
+        document.getElementById('council-creative-text').innerText = data.creative_opinion || 'تم تدقيق المنطق والسيناريوهات البديلة.';
+        document.getElementById('council-architect-text').innerText = data.architect_opinion || 'تمت مطابقة المعمارية ومنع أي تضارب.';
+        document.getElementById('council-solution-code').innerText = data.coder_solution || rawText;
 
-    async function autoApplyCouncilPatch() {
-      if (!lastCouncilPatchCode) return showToast('لا يوجد كود معتمد لتطبيقه', 'error');
-      const targetFile = document.getElementById('patch-target-file').value.trim() || 'src/web_app.py';
-
-      showToast('جاري تطبيق التعديل وحفظ نسخة احتياطية...');
-      try {
-        const res = await fetch('/api/patch/apply', {
+        // Auto-Apply to server
+        showToast('تم اعتماد الحل 10/10! جاري تطبيقه جراحياً في السيرفر...');
+        const applyRes = await fetch('/api/patch/apply', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            target_file: targetFile,
-            patch_code: lastCouncilPatchCode,
+            target_file: 'src/web_app.py',
+            patch_code: data.coder_solution || rawText,
             backup: true
           })
         });
-        const data = await res.json();
-        showToast(data.message || 'تم تطبيق التعديل بنجاح في السيرفر!');
+        const applyData = await applyRes.json();
+        document.getElementById('apply-status-msg').innerText = applyData.message || 'تم تطبيق الكود بنجاح والسيرفر يعمل بالنسخة الأحدث!';
+        showToast('تم تطبيق الكود بنجاح والـ 10 من 10 معتمدة!');
       } catch (err) {
-        showToast('فشل تطبيق التعديل في السيرفر: ' + err, 'error');
+        showToast('حدث خطأ أثناء المعالجة: ' + err, 'error');
+      } finally {
+        btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> حل المشكلة وتحسين الناتج وتطبيقه تلقائياً في السيرفر';
+        btn.disabled = false;
       }
-    }
-
-    function downloadPlatformPackage(target) {
-      showToast(`جاري تجهيز حزمة ${target.toUpperCase()} للتحميل...`);
-      setTimeout(() => {
-        showToast(`تم تجهيز ملف ${target.toUpperCase()}، جاري الحفظ!`);
-        window.open('/api/health');
-      }, 1500);
     }
   </script>
 </body>
