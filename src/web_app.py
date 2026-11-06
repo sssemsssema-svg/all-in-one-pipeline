@@ -839,13 +839,26 @@ NOTEBOOK_HTML_CONTENT = """<!DOCTYPE html>
 
     // Custom AI Generated Background
     function generateCustomBackground() {
-      const prompt = document.getElementById('bg-prompt-input').value.trim();
-      if (!prompt) return alert('اكتب وصف الخلفية أولاً');
-      const encodedPrompt = encodeURIComponent(`texture background wallpaper stationery paper art, ${prompt}`);
+      const input = document.getElementById('bg-prompt-input');
+      const prompt = input ? input.value.trim() : '';
+      if (!prompt) return alert('اكتب وصف الخلفية أولاً أو انطقها بصوتك');
+      const btn = document.querySelector('button[onclick="generateCustomBackground()"]');
+      if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin ml-1"></i> جاري الرسم...';
+      const encodedPrompt = encodeURIComponent(`texture background wallpaper stationery paper art aesthetic, ${prompt}`);
       const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1200&height=1600&nologo=true&seed=${Math.floor(Math.random()*10000)}`;
       
-      const paper = document.getElementById('notebook-paper');
-      paper.style.background = `url('${imageUrl}') center/cover no-repeat`;
+      const img = new Image();
+      img.onload = () => {
+        const paper = document.getElementById('notebook-paper');
+        paper.style.background = `url('${imageUrl}') center/cover no-repeat`;
+        if (btn) btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles ml-1"></i> توليد';
+      };
+      img.onerror = () => {
+        const paper = document.getElementById('notebook-paper');
+        paper.style.background = `url('${imageUrl}') center/cover no-repeat`;
+        if (btn) btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles ml-1"></i> توليد';
+      };
+      img.src = imageUrl;
     }
 
     // Insert Image Card
@@ -992,6 +1005,16 @@ NOTEBOOK_HTML_CONTENT = """<!DOCTYPE html>
     // Voice Intent Classifier
     function handleVoiceCommand(text) {
       console.log('Voice Input:', text);
+
+      // Intent 0: Background change request ("خلفية" أو "غير الخلفية" أو "ورقة كـ")
+      if (text.includes('خلفية') || text.includes('خلفيه') || text.includes('غير الخلفية') || text.includes('غير خلفية') || text.includes('ورقة كـ')) {
+        let cleanPrompt = text.replace(/غير الخلفية لـ|غير الخلفية إلى|غير الخلفية|غير خلفية|خلفية|خلفيه|ورقة كـ|ورقة مثل/g, '').trim();
+        if (!cleanPrompt) cleanPrompt = text;
+        const input = document.getElementById('bg-prompt-input');
+        if (input) input.value = cleanPrompt;
+        generateCustomBackground();
+        return;
+      }
 
       // Intent 1: Image Request ("صورة" أو "ارسم" أو "توليد صورة")
       if (text.includes('صورة') || text.includes('ارسم') || text.includes('صوره')) {
