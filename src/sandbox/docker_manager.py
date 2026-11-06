@@ -33,20 +33,33 @@ _FORBIDDEN_PATH_CHARS_RE = re.compile(r'[\x00-\x1f\x7f\\:*?"<>|]')
 
 # Executed with `python -I` so nothing in /workspace can shadow the stdlib (e.g. ast.py).
 _CONTAINER_CHECK_SCRIPT = """\
-import ast, pathlib, sys
+import ast, pathlib, re, sys
 root = pathlib.Path('/workspace')
 errors = []
-files = sorted(p for p in root.rglob('*.py') if p.is_file() and not p.is_symlink())
-for path in files:
+
+# 1. Python AST verification
+py_files = sorted(p for p in root.rglob('*.py') if p.is_file() and not p.is_symlink())
+for path in py_files:
     rel = path.relative_to(root)
     try:
         ast.parse(path.read_bytes(), filename=str(rel))
     except (SyntaxError, ValueError, RecursionError, MemoryError) as exc:
         errors.append(f'{rel}: {type(exc).__name__}: {exc}')
+
+# 2. Frontend & Static UI Verification
+html_files = sorted(p for p in root.rglob('*.html') if p.is_file() and not p.is_symlink())
+for path in html_files:
+    rel = path.relative_to(root)
+    content = path.read_text(encoding='utf-8', errors='ignore')
+    if '<script' in content and '</script>' not in content:
+        errors.append(f'{rel}: Unclosed <script> tag detected')
+    if re.search(r'\\bonclick\\s*=\\s*["\']\\s*["\']', content):
+        errors.append(f'{rel}: Empty onclick handler found')
+
 if errors:
     print('\\n'.join(errors), file=sys.stderr)
     sys.exit(1)
-print(f'Parsed {len(files)} Python files')
+print(f'Verified {len(py_files)} Python files and {len(html_files)} HTML files')
 """
 
 

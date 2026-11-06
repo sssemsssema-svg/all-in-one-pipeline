@@ -39,11 +39,20 @@ SYSTEM_PROMPT = "You are a precise autonomous agent. Follow the user's schema ex
 _ACCOUNT_ID_RE = re.compile(r"^[A-Za-z0-9]{1,64}$")
 
 STAGE_INSTRUCTIONS: dict[Stage, str] = {
-    Stage.CREATIVE: "Explore objective and propose a coherent initial plan.",
-    Stage.ARCHITECT: "Review blueprint as a systems architect. Make precise patches.",
+    Stage.CREATIVE: (
+        "Explore objective thoroughly. Extract all explicit user constraints (e.g. named tools like Bing, "
+        "modular tabs, continuous voice streaming, typography preservation) into metadata.requirements. "
+        "Propose a resilient plan adhering strictly to the Engineering Quality Contracts."
+    ),
+    Stage.ARCHITECT: (
+        "Review blueprint as a principal systems architect. Verify 100% of user constraints in "
+        "metadata.requirements have dedicated architectural steps. Forbid regex for NLP, "
+        "enforce persistent media streams with silence recovery, and require modular UI tabs for multi-purpose features."
+    ),
     Stage.CODER: (
         "Review blueprint as a principal implementation engineer. "
-        "Turn requirements into actionable steps."
+        "Turn requirements into hardened, production-grade code. Enforce zero-fail mobile fallbacks, "
+        "LLM-backed intent extractors, prompt preservation layers, and verified interactive UI."
     ),
 }
 
