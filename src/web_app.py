@@ -764,8 +764,44 @@ HTML_CONTENT = """<!DOCTYPE html>
         </div>
       </div>
 
-      <!-- Live Stream Logs -->
-      <div id="voice-stream-panel" class="hidden bg-slate-950 rounded-2xl p-4 border border-slate-800 text-xs font-mono text-slate-300 max-h-48 overflow-y-auto space-y-1"></div>
+      <!-- Live Stream Logs with Copy Button -->
+      <div id="voice-stream-wrapper" class="hidden flex flex-col gap-2">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span><i class="fa-solid fa-terminal text-indigo-400"></i> سجل البايب لاين الحي:</span>
+          <button type="button" onclick="copyElementText('voice-stream-panel')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center gap-1 transition">
+            <i class="fa-regular fa-copy"></i> نسخ سجل العمليات
+          </button>
+        </div>
+        <div id="voice-stream-panel" class="bg-slate-950 rounded-2xl p-4 border border-slate-800 text-xs font-mono text-slate-300 max-h-44 overflow-y-auto space-y-1"></div>
+      </div>
+
+      <!-- Generated Files Showcase with Tabs and Copy Buttons -->
+      <div id="slot1-files-container" class="hidden bg-slate-950 border border-emerald-500/40 rounded-2xl p-5 flex flex-col gap-4 mt-2">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3 flex-wrap gap-2">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-code text-emerald-400 text-sm"></i>
+            <span class="text-xs font-bold text-white">ملفات المشروع المنتجة (جاهزة للتشغيل 10/10)</span>
+            <span id="slot1-files-count" class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono font-bold">0 ملفات</span>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <button type="button" onclick="copyCurrentFileSlot1()" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-1.5 transition">
+              <i class="fa-regular fa-copy"></i> نسخ كود هذا الملف
+            </button>
+            <button type="button" onclick="copyAllFilesSlot1()" class="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-copy"></i> نسخ جميع الأكواد
+            </button>
+            <a id="slot1-download-zip" href="#" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-download"></i> تحميل Zip
+            </a>
+          </div>
+        </div>
+
+        <!-- File Tabs -->
+        <div id="slot1-file-tabs" class="flex items-center gap-2 overflow-x-auto pb-1 text-xs font-mono"></div>
+
+        <!-- File Code Viewer -->
+        <pre id="slot1-code-viewer" class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-xs font-mono text-emerald-300 whitespace-pre-wrap max-h-80 overflow-y-auto leading-relaxed"></pre>
+      </div>
     </section>
 
     <!-- ============================================================== -->
@@ -1178,10 +1214,19 @@ ${lastCouncilData.coder_solution}
         timerEl.innerText = `⏱️ ${elapsed} ثانية`;
       }, 1000);
 
-      showToast('جاري إطلاق البايب لاين...');
+      const streamWrapper = document.getElementById('voice-stream-wrapper');
       const streamBox = document.getElementById('voice-stream-panel');
-      streamBox.classList.remove('hidden');
-      streamBox.innerHTML = '<div>[START] جاري إرسال الفكرة لمجلس الـ Agents...</div>';
+      streamWrapper.classList.remove('hidden');
+      streamBox.innerHTML = '<div>[START] جاري إطلاق البايب لاين والتواصل مع النماذج...</div>';
+
+      // Reset steps
+      document.getElementById('v-step-1').className = 'p-2.5 rounded-xl bg-indigo-950/80 text-indigo-200 border border-indigo-500/60 animate-pulse flex items-center justify-center gap-1.5';
+      document.getElementById('v-step-1').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 1. Creative (نشط)';
+      document.getElementById('v-step-2').className = 'p-2.5 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 flex items-center justify-center gap-1.5';
+      document.getElementById('v-step-2').innerHTML = '<i class="fa-solid fa-sitemap"></i> 2. Architect';
+      document.getElementById('v-step-3').className = 'p-2.5 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 flex items-center justify-center gap-1.5';
+      document.getElementById('v-step-3').innerHTML = '<i class="fa-solid fa-code"></i> 3. Coder';
+      document.getElementById('v-status-title').innerHTML = 'Creative Agent: يحلل الفكرة ويفكك المتطلبات...';
 
       try {
         const res = await fetch('/api/pipeline/start', {
@@ -1189,25 +1234,149 @@ ${lastCouncilData.coder_solution}
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ objective: prompt })
         });
+        if (!res.ok) {
+          throw new Error('خطأ في السيرفر (' + res.status + ')');
+        }
         const data = await res.json();
         const evtSource = new EventSource(`/api/pipeline/stream/${data.job_id}`);
+
         evtSource.onmessage = function(e) {
           const ev = JSON.parse(e.data);
           const line = document.createElement('div');
           line.innerText = `[${ev.event}] ${ev.message || JSON.stringify(ev.data || '')}`;
           streamBox.appendChild(line);
           streamBox.scrollTop = streamBox.scrollHeight;
-          if (ev.event === 'job_completed' || ev.event === 'job_failed') {
+
+          // Real-time Stepper Transitions
+          if (ev.event === 'stage_start') {
+            const stage = ev.stage;
+            const title = document.getElementById('v-status-title');
+            if (stage === 'creative') {
+              title.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-indigo-400"></i> Creative Agent: يحلل الفكرة ويفكك المتطلبات...';
+              document.getElementById('v-step-1').className = 'p-2.5 rounded-xl bg-indigo-950/80 text-indigo-200 border border-indigo-500/60 animate-pulse flex items-center justify-center gap-1.5';
+              document.getElementById('v-step-1').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 1. Creative (نشط)';
+            } else if (stage === 'architect') {
+              title.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-cyan-400"></i> Architect Agent: يراجع المعمارية ويمنع التضارب...';
+              document.getElementById('v-step-1').className = 'p-2.5 rounded-xl bg-emerald-950/60 text-emerald-300 border border-emerald-600/40 flex items-center justify-center gap-1.5';
+              document.getElementById('v-step-1').innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i> 1. Creative (مكتمل)';
+              document.getElementById('v-step-2').className = 'p-2.5 rounded-xl bg-cyan-950/80 text-cyan-200 border border-cyan-500/60 animate-pulse flex items-center justify-center gap-1.5';
+              document.getElementById('v-step-2').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 2. Architect (نشط)';
+            } else if (stage === 'coder') {
+              title.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-amber-400"></i> Coder Agent: يصيغ الكود البرمجي ويفحص الجودة 10/10...';
+              document.getElementById('v-step-1').className = 'p-2.5 rounded-xl bg-emerald-950/60 text-emerald-300 border border-emerald-600/40 flex items-center justify-center gap-1.5';
+              document.getElementById('v-step-1').innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i> 1. Creative (مكتمل)';
+              document.getElementById('v-step-2').className = 'p-2.5 rounded-xl bg-emerald-950/60 text-emerald-300 border border-emerald-600/40 flex items-center justify-center gap-1.5';
+              document.getElementById('v-step-2').innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i> 2. Architect (مكتمل)';
+              document.getElementById('v-step-3').className = 'p-2.5 rounded-xl bg-amber-950/80 text-amber-200 border border-amber-500/60 animate-pulse flex items-center justify-center gap-1.5';
+              document.getElementById('v-step-3').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 3. Coder (نشط)';
+            }
+          }
+
+          // Completion or Failure
+          if (ev.event === 'done' || ev.event === 'job_completed' || ev.event === 'job_failed') {
             evtSource.close();
-            showToast(ev.event === 'job_completed' ? 'اكتمل بناء المشروع بنجاح!' : 'حدث خطأ: ' + ev.message);
+            clearInterval(vTimer);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-rocket"></i> إرسال الفكرة وتشغيل البايب لاين';
+
+            if (ev.status === 'failed' || ev.event === 'job_failed') {
+              showToast('حدث خطأ أثناء التنفيذ: ' + (ev.error || ev.message), 'error');
+              document.getElementById('v-status-title').innerHTML = '❌ فشل التنفيذ: ' + (ev.error || ev.message);
+              return;
+            }
+
+            // Mark all steps as complete
+            document.getElementById('v-step-1').className = 'p-2.5 rounded-xl bg-emerald-950/60 text-emerald-300 border border-emerald-600/40 flex items-center justify-center gap-1.5';
+            document.getElementById('v-step-1').innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i> 1. Creative (معتمد)';
+            document.getElementById('v-step-2').className = 'p-2.5 rounded-xl bg-emerald-950/60 text-emerald-300 border border-emerald-600/40 flex items-center justify-center gap-1.5';
+            document.getElementById('v-step-2').innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i> 2. Architect (معتمد)';
+            document.getElementById('v-step-3').className = 'p-2.5 rounded-xl bg-emerald-950/60 text-emerald-300 border border-emerald-600/40 flex items-center justify-center gap-1.5';
+            document.getElementById('v-step-3').innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i> 3. Coder (معتمد 10/10)';
+
+            document.getElementById('v-status-title').innerHTML = '🎉 اكتمل بناء المشروع والملفات جاهزة 10/10!';
+            timerEl.innerText = `⏱️ استغرق: ${elapsed} ثانية (مكتمل)`;
+
+            if (ev.files && Object.keys(ev.files).length > 0) {
+              renderGeneratedFilesSlot1(ev.files, data.job_id);
+            }
+            showToast('اكتمل بناء المشروع بنجاح 10/10!');
           }
         };
+
+        evtSource.onerror = function() {
+          // If error occurs before completion
+          console.warn('SSE stream closed');
+        };
+
       } catch (err) {
+        clearInterval(vTimer);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-rocket"></i> إرسال الفكرة وتشغيل البايب لاين';
         showToast('فشل بدء البايب لاين: ' + err, 'error');
       }
     }
 
-    // ==============================================================
+    let currentSlot1Files = {};
+    let activeSlot1Filename = '';
+
+    function renderGeneratedFilesSlot1(files, jobId) {
+      currentSlot1Files = files;
+      const container = document.getElementById('slot1-files-container');
+      const tabs = document.getElementById('slot1-file-tabs');
+      const countLabel = document.getElementById('slot1-files-count');
+      const downloadZip = document.getElementById('slot1-download-zip');
+
+      container.classList.remove('hidden');
+      tabs.innerHTML = '';
+      const filenames = Object.keys(files);
+      countLabel.innerText = `${filenames.length} ملفات جاهزة`;
+      downloadZip.href = `/api/pipeline/download/${jobId}`;
+
+      filenames.forEach((fname, idx) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = `px-3 py-1.5 rounded-xl text-xs font-mono transition whitespace-nowrap ${idx === 0 ? 'bg-indigo-600 text-white font-bold shadow' : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'}`;
+        b.innerText = fname;
+        b.onclick = () => selectSlot1File(fname, b);
+        tabs.appendChild(b);
+      });
+
+      if (filenames.length > 0) {
+        selectSlot1File(filenames[0], tabs.children[0]);
+      }
+      container.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function selectSlot1File(filename, tabBtn) {
+      activeSlot1Filename = filename;
+      Array.from(document.getElementById('slot1-file-tabs').children).forEach(btn => {
+        btn.className = 'px-3 py-1.5 rounded-xl text-xs font-mono transition whitespace-nowrap bg-slate-900 text-slate-400 hover:text-white border border-slate-800';
+      });
+      if (tabBtn) {
+        tabBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-mono transition whitespace-nowrap bg-indigo-600 text-white font-bold shadow';
+      }
+      document.getElementById('slot1-code-viewer').innerText = currentSlot1Files[filename] || '';
+    }
+
+    function copyCurrentFileSlot1() {
+      if (!activeSlot1Filename || !currentSlot1Files[activeSlot1Filename]) {
+        return showToast('لا يوجد ملف محدد للنسخ', 'error');
+      }
+      copyToClipboard(currentSlot1Files[activeSlot1Filename], `تم نسخ كود الملف: ${activeSlot1Filename}`);
+    }
+
+    function copyAllFilesSlot1() {
+      if (!currentSlot1Files || !Object.keys(currentSlot1Files).length) {
+        return showToast('لا توجد ملفات لنسخها', 'error');
+      }
+      let bundle = '';
+      for (const [fname, fcode] of Object.entries(currentSlot1Files)) {
+        bundle += `=== FILE: ${fname} ===\n${fcode}\n\n`;
+      }
+      copyToClipboard(bundle, 'تم نسخ جميع ملفات المشروع دفعة واحدة!');
+    }
+
+        // ==============================================================
     // SLOT 2: SMART PASTE & COUNCIL DELIBERATION
     // ==============================================================
     async function processRawPasteAndSolve() {
