@@ -56,18 +56,69 @@ def load_persistent_history() -> dict[str, Any]:
     if HISTORY_FILE.exists():
         try:
             with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            pass
+                data = json.load(f)
+                # Auto-prune any incomplete/failed artifacts on read
+                data["projects"] = [
+                    p for p in data.get("projects", [])
+                    if p.get("status") == "مكتمل وشغال بنجاح"
+                ]
+                data["patches"] = [
+                    pt for pt in data.get("patches", [])
+                    if pt.get("score") == "10/10" and pt.get("directive")
+                ]
+                return data
+        except Exception as e:
+            log.warning("Could not read history: %s", e)
     return {"projects": [], "patches": [], "prompts_log": []}
 
-def save_persistent_history(data: dict[str, Any]) -> None:
+def save_completed_project(job_id: str, objective: str, files: dict[str, str]) -> None:
     try:
+        data = load_persistent_history()
+        # Remove any existing draft with same id or objective
+        data["projects"] = [p for p in data["projects"] if p.get("id") != job_id and p.get("objective") != objective]
+        # Append only the complete verified project
+        data["projects"].insert(0, {
+            "id": job_id,
+            "name": objective[:45] + ("..." if len(objective) > 45 else ""),
+            "date": "2026-11-06",
+            "status": "مكتمل وشغال بنجاح",
+            "objective": objective,
+            "files_count": len(files),
+            "download_url": f"/api/pipeline/download/{job_id}"
+        })
+        # Clean up temporary drafts from prompt log
+        data["prompts_log"] = [
+            p for p in data.get("prompts_log", [])
+            if p.get("content") != objective
+        ]
         HISTORY_FILE.parent.mkdir(parents=True, exist_ok=True)
         with open(HISTORY_FILE, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
+        log.info("Persisted completed project: %s", job_id)
     except Exception as e:
-        log.error("Failed to save history: %s", e)
+        log.error("Failed to save completed project: %s", e)
+
+def save_completed_patch(patch_entry: dict[str, Any], raw_snippet: str) -> None:
+    try:
+        data = load_persistent_history()
+        # Prune test or duplicate patches
+        data["patches"] = [
+            pt for pt in data["patches"]
+            if pt.get("directive") != patch_entry.get("directive") and pt.get("title") != "test desc"
+        ]
+        # Insert finalized complete patch at the top
+        data["patches"].insert(0, patch_entry)
+        # Purge temporary prompt log entries for this snippet
+        data["prompts_log"] = [
+            p for p in data.get("prompts_log", [])
+            if p.get("content") != raw_snippet
+        ]
+        HISTORY_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        log.info("Persisted completed patch: %s", patch_entry.get("id"))
+    except Exception as e:
+        log.error("Failed to save completed patch: %s", e)
 
 
 
@@ -276,15 +327,8 @@ Return ONLY valid JSON with this exact schema:
         "code": result.get("coder_solution", ""),
         "status": "معتمد 10/10"
     }
-    PATCH_HISTORY.append(patch_entry)
-    hdata = load_persistent_history()
-    hdata.setdefault("patches", []).append(patch_entry)
-    hdata.setdefault("prompts_log", []).append({
-        "timestamp": uuid.uuid4().hex[:8],
-        "type": "slot2_paste_and_fix",
-        "content": req.code_snippet
-    })
-    save_persistent_history(hdata)
+    PATCH_HISTORY.insert(0, patch_entry)
+    save_completed_patch(patch_entry, req.code_snippet)
 
     return result
 
@@ -486,6 +530,7 @@ async def _run_pipeline_job(job_id: str, objective: str) -> None:
             files = await _generate_code_for_blueprint(provider_client, objective, final_bp, emit)
             job["files"] = files
             job["status"] = "completed"
+            save_completed_project(job_id, objective, files)
             emit("log", {"message": f"🎉 Complete! Generated {len(files)} production project files."})
 
     except Exception as exc:
