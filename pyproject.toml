@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zero-touch-routing"
+version = "0.2.0"
+description = "Zero-Touch Multi-Agent Smart Routing Pipeline"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Elite Systems Architect" }]
+dependencies = [
+    "pydantic>=2.6,<3",
+    "pyyaml>=6.0,<7",
+    "jsonpatch>=1.33,<2",
+    "jsonpointer>=2.4,<4",
+    "docker>=7.0,<8",
+    "requests>=2.31,<3",
+    "httpx>=0.27,<1",
+    "packaging>=23.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.4",
+    "mypy>=1.9",
+    "types-PyYAML",
+    "types-requests",
+]
+
+[project.scripts]
+zero-touch = "main:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+py-modules = ["main"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["agents*", "sandbox*", "validators*", "orchestrator*"]
+namespaces = true
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-ra -q"
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "SIM", "TID", "PL"]
+ignore = ["PLR0911", "PLR0912", "PLR0913", "PLR0915", "PLR2004"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+plugins = ["pydantic.mypy"]
+mypy_path = "src"
+files = ["src"]
+
+[[tool.mypy.overrides]]
+module = ["jsonpatch.*", "jsonpointer.*", "docker.*"]
+ignore_missing_imports = true

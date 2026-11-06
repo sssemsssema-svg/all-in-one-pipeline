@@ -1,0 +1,63 @@
+version: "1.0"
+routing:
+  stages: [creative, architect, coder]
+  tag_to_stage:
+    creative: creative
+    architect: architect
+    coder: coder
+    brainstorm: creative
+    design: architect
+    implement: coder
+    code: coder
+providers:
+  creative:
+    - name: groq_gpt_120b
+      model: openai/gpt-oss-120b
+      endpoint: https://api.groq.com/openai/v1/chat/completions
+      api_style: openai
+      rpm: 30
+      tpd: 1000000
+      api_key_env: GROQ_API_KEY
+      tags: [creative, fast, premium]
+    - name: openrouter_nemotron
+      model: nvidia/nemotron-3.5-lightning:free
+      endpoint: https://openrouter.ai/api/v1/chat/completions
+      api_style: openai
+      rpm: 20
+      tpd: 500000
+      api_key_env: OPENROUTER_API_KEY
+      tags: [creative, cheap, high-quota]
+  architect:
+    - name: groq_qwen_architect
+      model: qwen/qwen3.8-27b
+      endpoint: https://api.groq.com/openai/v1/chat/completions
+      api_style: openai
+      rpm: 30
+      tpd: 1000000
+      api_key_env: GROQ_API_KEY
+      tags: [architect, reasoning, fast]
+    - name: openrouter_nemotron_arch
+      model: nvidia/nemotron-3.5-lightning:free
+      endpoint: https://openrouter.ai/api/v1/chat/completions
+      api_style: openai
+      rpm: 20
+      tpd: 500000
+      api_key_env: OPENROUTER_API_KEY
+      tags: [architect, reasoning, premium]
+  coder:
+    - name: groq_qwen_coder
+      model: qwen/qwen3.8-27b
+      endpoint: https://api.groq.com/openai/v1/chat/completions
+      api_style: openai
+      rpm: 30
+      tpd: 1000000
+      api_key_env: GROQ_API_KEY
+      tags: [coder, code, fast]
+    - name: openrouter_cohere_code
+      model: cohere/north-mini-code:free
+      endpoint: https://openrouter.ai/api/v1/chat/completions
+      api_style: openai
+      rpm: 20
+      tpd: 500000
+      api_key_env: OPENROUTER_API_KEY
+      tags: [coder, fast, cheap]
