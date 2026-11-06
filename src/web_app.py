@@ -508,6 +508,9 @@ HTML_CONTENT = """<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>All In One - مركز قيادة الذكاء الاصطناعي</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -572,6 +575,14 @@ HTML_CONTENT = """<!DOCTYPE html>
 
       <!-- Header Actions & Controls -->
       <div class="flex items-center gap-2 flex-wrap">
+        <!-- Live Server Heartbeat -->
+        <div id="server-heartbeat" class="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-slate-950 border border-slate-800 text-xs font-mono shadow-inner">
+          <span class="relative flex h-2.5 w-2.5">
+            <span id="ping-pulse" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span id="ping-dot" class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+          </span>
+          <span id="ping-text" class="text-emerald-400 font-bold text-[11px]">🟢 السيرفر شغال (0.05s)</span>
+        </div>
         <!-- Master Execution Mode Toggle -->
         <div class="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 text-xs font-bold">
           <span class="text-slate-400 text-[10px] font-bold ml-1">الوضع:</span>
@@ -590,6 +601,17 @@ HTML_CONTENT = """<!DOCTYPE html>
       </div>
     </div>
   </header>
+
+  <!-- Version & Cache Notification Bar -->
+  <div class="bg-gradient-to-r from-indigo-950 via-purple-950 to-slate-950 border-b border-indigo-900/40 px-4 py-2 flex items-center justify-between text-xs text-indigo-200 flex-wrap gap-2">
+    <div class="flex items-center gap-2">
+      <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono font-bold text-[10px] border border-emerald-500/30">v3.0 Live</span>
+      <span>✨ <b>مركز الـ 2 Slots المباشر</b> • لو الشاشة القديمة ظاهرة اسحبي الشاشة للأسفل للتحديث (Refresh)</span>
+    </div>
+    <button onclick="window.location.reload()" class="px-3 py-1 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 text-[11px] font-bold flex items-center gap-1 border border-indigo-500/30 transition">
+      <i class="fa-solid fa-arrows-rotate"></i> تحديث الصفحة الآن
+    </button>
+  </div>
 
   <!-- Main 2-Slot Layout -->
   <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-8">
@@ -632,6 +654,28 @@ HTML_CONTENT = """<!DOCTYPE html>
         </button>
       </div>
 
+      <!-- Slot 1 Live Progress Stepper & Timer -->
+      <div id="voice-processing-indicator" class="hidden bg-slate-950 border border-indigo-500/40 rounded-2xl p-4 flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-indigo-300 flex items-center gap-2">
+            <i class="fa-solid fa-spinner fa-spin text-indigo-400"></i>
+            <span id="v-status-title">جاري تشغيل البايبلاين وبناء المشروع...</span>
+          </span>
+          <span id="voice-timer" class="text-xs font-mono text-emerald-400 font-bold bg-slate-900 px-3 py-1 rounded-xl border border-slate-800">⏱️ 0 ثانية</span>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-center text-xs pt-1 font-bold">
+          <div id="v-step-1" class="p-2.5 rounded-xl bg-indigo-950/60 text-indigo-300 border border-indigo-600/40 flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-brain"></i> 1. Creative
+          </div>
+          <div id="v-step-2" class="p-2.5 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-sitemap"></i> 2. Architect
+          </div>
+          <div id="v-step-3" class="p-2.5 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-code"></i> 3. Coder
+          </div>
+        </div>
+      </div>
+
       <!-- Live Stream Logs -->
       <div id="voice-stream-panel" class="hidden bg-slate-950 rounded-2xl p-4 border border-slate-800 text-xs font-mono text-slate-300 max-h-48 overflow-y-auto space-y-1"></div>
     </section>
@@ -663,6 +707,29 @@ HTML_CONTENT = """<!DOCTYPE html>
         <button type="button" id="solve-paste-btn" onclick="processRawPasteAndSolve()" class="w-full sm:w-auto px-7 py-3 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center justify-center gap-2.5 transition shadow-xl shadow-purple-600/30">
           <i class="fa-solid fa-wand-magic-sparkles"></i> حل المشكلة واعتماد الحل النهائي
         </button>
+      </div>
+
+      <!-- Slot 2 Live Stepper & Timer -->
+      <div id="council-processing-indicator" class="hidden bg-slate-950 border border-purple-500/40 rounded-2xl p-4 flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-purple-300 flex items-center gap-2">
+            <i class="fa-solid fa-spinner fa-spin text-purple-400"></i>
+            <span id="c-status-title">مجلس الـ Agents في جلسة تشاور نشطة الآن...</span>
+          </span>
+          <span id="council-timer" class="text-xs font-mono text-purple-300 font-bold bg-slate-900 px-3 py-1 rounded-xl border border-slate-800">⏱️ 0 ثانية</span>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-center text-xs pt-1 font-bold">
+          <div id="c-step-1" class="p-2.5 rounded-xl bg-purple-950/60 text-purple-300 border border-purple-600/40 flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-microscope"></i> 1. فحص الكود والمشكلة
+          </div>
+          <div id="c-step-2" class="p-2.5 rounded-xl bg-purple-950/40 text-purple-300 border border-purple-700/30 flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-file-shield"></i> 2. صياغة الأمر الصارم
+          </div>
+          <div id="c-step-3" class="p-2.5 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-stamp"></i> 3. اعتماد 10/10
+          </div>
+        </div>
+        <p class="text-[11px] text-slate-400 text-center">الموديلز يتشاورون ويصيغون الحل النهائي المعتمد.. السيرفر شغال ولا تغلقي الصفحة</p>
       </div>
 
       <!-- Deliberation & 10/10 Score Result Panel -->
@@ -740,6 +807,40 @@ HTML_CONTENT = """<!DOCTYPE html>
   </main>
 
   <script>
+    // Live Heartbeat polling every 2.5 seconds
+    let heartbeatInterval = null;
+    function startServerHeartbeat() {
+      const pingText = document.getElementById('ping-text');
+      const pingDot = document.getElementById('ping-dot');
+      const pingPulse = document.getElementById('ping-pulse');
+
+      async function checkHeartbeat() {
+        const t0 = performance.now();
+        try {
+          const res = await fetch('/api/health?t=' + Date.now());
+          const t1 = performance.now();
+          const latency = Math.round(t1 - t0);
+          if (res.ok) {
+            pingText.innerText = `🟢 السيرفر شغال (${latency}ms)`;
+            pingText.className = 'text-emerald-400 font-bold text-[11px]';
+            pingDot.className = 'relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500';
+            pingPulse.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75';
+          } else {
+            throw new Error('status ' + res.status);
+          }
+        } catch (e) {
+          pingText.innerText = '🔴 انقطع الاتصال بالسيرفر';
+          pingText.className = 'text-rose-400 font-bold text-[11px]';
+          pingDot.className = 'relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500';
+          pingPulse.className = 'hidden';
+        }
+      }
+
+      checkHeartbeat();
+      heartbeatInterval = setInterval(checkHeartbeat, 2500);
+    }
+    window.addEventListener('DOMContentLoaded', startServerHeartbeat);
+
     let currentMode = 'auto'; // 'auto' or 'review'
     let lastCouncilData = null;
 
@@ -975,6 +1076,20 @@ ${lastCouncilData.coder_solution}
       const prompt = document.getElementById('project-prompt-input').value.trim();
       if (!prompt) return showToast('اكتبي أو سجلي فكرة المشروع أولاً', 'error');
 
+      const btn = document.getElementById('start-pipeline-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري البناء بالبايب لاين...';
+
+      const ind = document.getElementById('voice-processing-indicator');
+      ind.classList.remove('hidden');
+      const timerEl = document.getElementById('voice-timer');
+      let elapsed = 0;
+      timerEl.innerText = '⏱️ 0 ثانية';
+      const vTimer = setInterval(() => {
+        elapsed++;
+        timerEl.innerText = `⏱️ ${elapsed} ثانية`;
+      }, 1000);
+
       showToast('جاري إطلاق البايب لاين...');
       const streamBox = document.getElementById('voice-stream-panel');
       streamBox.classList.remove('hidden');
@@ -1014,6 +1129,25 @@ ${lastCouncilData.coder_solution}
       const btn = document.getElementById('solve-paste-btn');
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> مجلس الـ Agents يناقش الحل ويصيغ الأمر الصارم...';
       btn.disabled = true;
+
+      const ind = document.getElementById('council-processing-indicator');
+      ind.classList.remove('hidden');
+      const timerEl = document.getElementById('council-timer');
+      let elapsed = 0;
+      timerEl.innerText = '⏱️ 0 ثانية';
+      const cTimer = setInterval(() => {
+        elapsed++;
+        timerEl.innerText = `⏱️ ${elapsed} ثانية`;
+        if (elapsed > 3) {
+          document.getElementById('c-step-1').className = 'p-2.5 rounded-xl bg-emerald-950/60 text-emerald-300 border border-emerald-600/40 flex items-center justify-center gap-1.5';
+          document.getElementById('c-step-2').className = 'p-2.5 rounded-xl bg-purple-950/80 text-purple-200 border border-purple-500/60 animate-pulse flex items-center justify-center gap-1.5';
+        }
+        if (elapsed > 7) {
+          document.getElementById('c-step-2').className = 'p-2.5 rounded-xl bg-emerald-950/60 text-emerald-300 border border-emerald-600/40 flex items-center justify-center gap-1.5';
+          document.getElementById('c-step-3').className = 'p-2.5 rounded-xl bg-indigo-950/80 text-indigo-200 border border-indigo-500/60 animate-pulse flex items-center justify-center gap-1.5';
+        }
+      }, 1000);
+
       showToast('مجلس الـ Agents يناقش الحل الآن...');
 
       try {
@@ -1028,6 +1162,9 @@ ${lastCouncilData.coder_solution}
         });
         const data = await res.json();
         lastCouncilData = data;
+        clearInterval(cTimer);
+        timerEl.innerText = `⏱️ استغرق: ${elapsed} ثانية (معتمد 10/10)`;
+        document.getElementById('c-step-3').className = 'p-2.5 rounded-xl bg-emerald-950/60 text-emerald-300 border border-emerald-600/40 flex items-center justify-center gap-1.5';
 
         // Reveal council panel
         const councilPanel = document.getElementById('council-panel');
