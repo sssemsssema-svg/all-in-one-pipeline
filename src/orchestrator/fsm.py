@@ -331,6 +331,6 @@ def make_blueprint(
             "goal": goal,
             "steps": [dict(step) for step in steps or ()],
             "revision": 0,
-            "metadata": {},
+            "metadata": {"creative": {}, "architect": {}, "coder": {}},
         }
     )

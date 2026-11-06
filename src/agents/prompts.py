@@ -64,7 +64,7 @@ ENGINEERING QUALITY CONTRACTS (MANDATORY FOR ALL STAGES):
 3. PERSISTENT MEDIA STREAMS: Real-time inputs (speech recognition, audio, camera) must NEVER use fragile fire-and-forget one-shots. They must implement auto-restart on silence, error resilience, and graceful degradation.
 4. PROMPT & TYPOGRAPHY PRESERVATION: In generative features, user text (especially quotes, titles, words like "Best Friends") must be protected in a dedicated prompt-refinement layer, never overwritten by hardcoded generic tags.
 5. ZERO-FAIL CLIENT ACTIONS: UI controls, clipboard copying, file exports, and buttons must NEVER rely on fragile APIs without fallbacks (e.g. clipboard must fall back to execCommand; native alert/confirm must be replaced by modern toasts).
-6. REQUIREMENT MATRIX: In metadata.requirements, maintain an explicit checklist mapping every user constraint to concrete plan steps. Mark any unaddressed requirement as a blocker.
+6. REQUIREMENT CHECKLIST: Each stage records its requirement checklist under /metadata/<stage>/requirements. Never attempt to modify or self-block on another stage's metadata subtree. Use info or warn critiques for non-critical observations; only use blocker when the goal itself is impossible.
 """
 
 

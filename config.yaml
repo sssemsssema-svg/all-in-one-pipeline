@@ -27,6 +27,14 @@ providers:
       tpd: 1000000
       api_key_env: GROQ_API_KEY
       tags: [creative, fast, cheap]
+    - name: openrouter_nemotron_creative
+      model: nvidia/nemotron-3.5-lightning:free
+      endpoint: https://openrouter.ai/api/v1/chat/completions
+      api_style: openai
+      rpm: 20
+      tpd: 500000
+      api_key_env: OPENROUTER_API_KEY
+      tags: [creative, cheap, high-quota]
   architect:
     - name: groq_gpt_120b_arch
       model: openai/gpt-oss-120b
@@ -44,6 +52,14 @@ providers:
       tpd: 1000000
       api_key_env: GROQ_API_KEY
       tags: [architect, reasoning, cheap]
+    - name: openrouter_nemotron_arch
+      model: nvidia/nemotron-3.5-lightning:free
+      endpoint: https://openrouter.ai/api/v1/chat/completions
+      api_style: openai
+      rpm: 20
+      tpd: 500000
+      api_key_env: OPENROUTER_API_KEY
+      tags: [architect, reasoning, premium]
   coder:
     - name: groq_gpt_120b_coder
       model: openai/gpt-oss-120b
@@ -61,3 +77,11 @@ providers:
       tpd: 1000000
       api_key_env: GROQ_API_KEY
       tags: [coder, code, cheap]
+    - name: openrouter_cohere_coder
+      model: cohere/north-mini-code:free
+      endpoint: https://openrouter.ai/api/v1/chat/completions
+      api_style: openai
+      rpm: 20
+      tpd: 500000
+      api_key_env: OPENROUTER_API_KEY
+      tags: [coder, fast, cheap]
