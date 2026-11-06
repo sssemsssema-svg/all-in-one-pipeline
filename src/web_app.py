@@ -50,6 +50,25 @@ app.add_middleware(
 JOBS: dict[str, dict[str, Any]] = {}
 
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "config.yaml"
+HISTORY_FILE = Path(__file__).resolve().parent / "data" / "history.json"
+
+def load_persistent_history() -> dict[str, Any]:
+    if HISTORY_FILE.exists():
+        try:
+            with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {"projects": [], "patches": [], "prompts_log": []}
+
+def save_persistent_history(data: dict[str, Any]) -> None:
+    try:
+        HISTORY_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        log.error("Failed to save history: %s", e)
+
 
 
 class PipelineRequest(BaseModel):
@@ -181,7 +200,8 @@ class PatchApplyRequest(BaseModel):
 
 @app.get("/api/history")
 async def get_history() -> dict[str, Any]:
-    return {"projects": PROJECT_HISTORY, "patches": PATCH_HISTORY}
+    data = load_persistent_history()
+    return {"projects": data.get("projects", []), "patches": data.get("patches", []), "prompts_log": data.get("prompts_log", [])}
 
 
 @app.post("/api/patch/consult")
@@ -246,7 +266,7 @@ Return ONLY valid JSON with this exact schema:
         }
 
     # Record in history
-    PATCH_HISTORY.append({
+    patch_entry = {
         "id": f"patch_{uuid.uuid4().hex[:6]}",
         "title": req.problem_desc[:50] or "تحسين وتصحيح كود معتمد",
         "date": "اليوم",
@@ -255,7 +275,16 @@ Return ONLY valid JSON with this exact schema:
         "directive": result.get("assembly_directive", ""),
         "code": result.get("coder_solution", ""),
         "status": "معتمد 10/10"
+    }
+    PATCH_HISTORY.append(patch_entry)
+    hdata = load_persistent_history()
+    hdata.setdefault("patches", []).append(patch_entry)
+    hdata.setdefault("prompts_log", []).append({
+        "timestamp": uuid.uuid4().hex[:8],
+        "type": "slot2_paste_and_fix",
+        "content": req.code_snippet
     })
+    save_persistent_history(hdata)
 
     return result
 
@@ -317,6 +346,21 @@ async def start_pipeline(req: PipelineRequest) -> dict[str, str]:
         "files": {},
         "error": None,
     }
+    # Persist immediately to disk
+    hdata = load_persistent_history()
+    hdata.setdefault("projects", []).append({
+        "id": job_id,
+        "name": objective[:40] + ("..." if len(objective) > 40 else ""),
+        "date": "2026-11-06",
+        "status": "قيد التنفيذ في البايب لاين",
+        "objective": objective
+    })
+    hdata.setdefault("prompts_log", []).append({
+        "timestamp": uuid.uuid4().hex[:8],
+        "type": "slot1_voice_project",
+        "content": objective
+    })
+    save_persistent_history(hdata)
     asyncio.create_task(_run_pipeline_job(job_id, objective))
     return {"job_id": job_id}
 
