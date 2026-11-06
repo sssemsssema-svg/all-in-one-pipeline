@@ -278,10 +278,16 @@ def gatekeeper_decision(stage: Stage, delta: AgentDelta, attempt: int) -> Gateke
     )
 
 
-def run_pipeline(objective: str, config_path: Path) -> int:
+def run_pipeline(
+    objective: str, config_path: Path, *, return_blueprint: bool = False
+) -> int | dict[str, Any]:
     objective = objective.strip()
     if not objective:
         raise ValueError("Objective must not be blank")
+    if not config_path.exists():
+        fallback_cfg = Path(__file__).resolve().parents[1] / config_path.name
+        if fallback_cfg.exists():
+            config_path = fallback_cfg
     governor = QuotaGovernor.from_yaml(config_path)
     fsm = PipelineFSM(
         make_blueprint(uuid.uuid4().hex, objective),
@@ -320,8 +326,13 @@ def run_pipeline(objective: str, config_path: Path) -> int:
     if fsm.state.error:
         log.error("Error: %s", fsm.state.error)
     if fsm.phase is Phase.COMPLETED:
+        blueprint_json = fsm.state.blueprint.model_dump(mode="json")
+        if return_blueprint:
+            return blueprint_json
         print(fsm.state.blueprint.model_dump_json(indent=2))
         return 0
+    if return_blueprint:
+        return {"error": fsm.state.error or "Pipeline did not reach completed state"}
     return 1
 
 

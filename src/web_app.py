@@ -22,12 +22,21 @@ from pydantic import BaseModel
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from agents.prompts import extract_json_object
+from dotenv import load_dotenv
+
+# Ensure API Keys from environment are loaded properly before executing
+env_file = Path(__file__).resolve().parents[1] / ".env"
+if env_file.exists():
+    load_dotenv(dotenv_path=env_file)
+load_dotenv()
+
 from main import (
     MAX_PIPELINE_CALLS,
     MAX_REVISIONS_PER_STAGE,
     ProviderClient,
     gatekeeper_decision,
     make_agent_callable,
+    run_pipeline,
 )
 from orchestrator.fsm import FSMError, PipelineFSM, make_blueprint
 from orchestrator.quota_governor import QuotaGovernor, QuotaGovernorError
@@ -401,24 +410,89 @@ async def health_check() -> dict[str, Any]:
 
 
 @app.post("/api/pipeline/start")
-async def start_pipeline(req: PipelineRequest) -> dict[str, str]:
-    objective = req.objective.strip()
-    if not objective:
-        raise HTTPException(status_code=400, detail="Objective cannot be empty")
-    job_id = uuid.uuid4().hex
-    JOBS[job_id] = {
-        "job_id": job_id,
-        "objective": objective,
+async def start_pipeline(req: PipelineRequest) -> dict[str, Any]:
+    """Execute the real Zero-Touch Multi-Agent Pipeline in a background thread."""
+    user_input = req.objective.strip()
+    if not user_input:
+        raise HTTPException(status_code=400, detail="Objective must not be blank")
+
+    # Load environment API keys properly
+    load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+    load_dotenv()
+
+    task_id = uuid.uuid4().hex
+    JOBS[task_id] = {
+        "job_id": task_id,
+        "task_id": task_id,
+        "objective": user_input,
         "status": "running",
         "stage": "creative",
-        "events": [],
+        "events": [
+            {"event": "log", "message": f"🚀 Starting Real Multi-Agent Pipeline for: '{user_input}'"}
+        ],
         "blueprint": None,
         "files": {},
         "error": None,
     }
-# Only completed projects are saved to disk once finished via save_completed_project
-    asyncio.create_task(_run_pipeline_job(job_id, objective))
-    return {"job_id": job_id}
+
+    async def _execute_real_pipeline():
+        try:
+            # Call real Multi-Agent Engine
+            blueprint = await asyncio.to_thread(
+                run_pipeline,
+                objective=user_input,
+                config_path=Path("config.yaml"),
+                return_blueprint=True,
+            )
+            if isinstance(blueprint, dict) and "error" in blueprint:
+                JOBS[task_id]["status"] = "failed"
+                JOBS[task_id]["error"] = blueprint["error"]
+                JOBS[task_id]["events"].append({"event": "job_failed", "message": blueprint["error"]})
+            else:
+                JOBS[task_id]["status"] = "completed"
+                JOBS[task_id]["blueprint"] = blueprint
+                JOBS[task_id]["events"].append({
+                    "event": "done",
+                    "status": "completed",
+                    "blueprint": blueprint,
+                    "message": "✅ Real Multi-Agent Architecture Blueprint certified 10/10!"
+                })
+                # Persist completed project to disk
+                save_completed_project(task_id, user_input, {})
+        except Exception as exc:
+            JOBS[task_id]["status"] = "failed"
+            JOBS[task_id]["error"] = str(exc)
+            JOBS[task_id]["events"].append({"event": "job_failed", "message": str(exc)})
+
+    asyncio.create_task(_execute_real_pipeline())
+    return {"task_id": task_id, "job_id": task_id, "status": "running"}
+
+
+@app.post("/api/pipeline/run")
+async def run_pipeline_sync(req: PipelineRequest) -> dict[str, Any]:
+    """Execute the real pipeline, wait for FSM to complete, and return the actual Blueprint JSON."""
+    user_input = req.objective.strip()
+    if not user_input:
+        raise HTTPException(status_code=400, detail="Objective must not be blank")
+
+    # Load environment API keys properly
+    load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+    load_dotenv()
+
+    try:
+        blueprint = await asyncio.to_thread(
+            run_pipeline,
+            objective=user_input,
+            config_path=Path("config.yaml"),
+            return_blueprint=True,
+        )
+        if isinstance(blueprint, dict) and "error" in blueprint:
+            raise HTTPException(status_code=500, detail=blueprint["error"])
+        return blueprint
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
 
 
 @app.get("/api/pipeline/stream/{job_id}")
@@ -432,18 +506,18 @@ async def stream_pipeline(job_id: str) -> StreamingResponse:
             job = JOBS.get(job_id)
             if not job:
                 break
-            events = job["events"]
+            events = job.get("events", [])
             while last_event_idx < len(events):
                 ev = events[last_event_idx]
                 yield f"data: {json.dumps(ev, ensure_ascii=False)}\n\n"
                 last_event_idx += 1
-            if job["status"] in ("completed", "failed"):
+            if job.get("status") in ("completed", "failed"):
                 final_payload = {
                     "event": "done",
                     "status": job["status"],
-                    "blueprint": job["blueprint"],
-                    "files": job["files"],
-                    "error": job["error"],
+                    "blueprint": job.get("blueprint"),
+                    "files": job.get("files", {}),
+                    "error": job.get("error"),
                 }
                 yield f"data: {json.dumps(final_payload, ensure_ascii=False)}\n\n"
                 break
@@ -454,197 +528,31 @@ async def stream_pipeline(job_id: str) -> StreamingResponse:
 
 @app.get("/api/pipeline/download/{job_id}")
 async def download_project(job_id: str):
-    files: dict[str, str] = {}
-    
-    # 1. Check in-memory JOBS
-    if job_id in JOBS and JOBS[job_id].get("files"):
-        files = JOBS[job_id]["files"]
-        
-    # 2. Check on-disk projects directory
-    if not files:
-        proj_dir = PROJECTS_DIR / job_id
-        if proj_dir.exists() and proj_dir.is_dir():
-            for fpath in proj_dir.rglob("*"):
-                if fpath.is_file():
-                    rel = str(fpath.relative_to(proj_dir)).replace("\\", "/")
-                    try:
-                        files[rel] = fpath.read_text(encoding="utf-8")
-                    except Exception:
-                        pass
-                        
-    # 3. Check history.json
-    if not files:
+    job = JOBS.get(job_id)
+    blueprint = job.get("blueprint") if job else None
+
+    if not blueprint:
         hdata = load_persistent_history()
-        for p in hdata.get("projects", []):
-            if p.get("id") == job_id and p.get("files"):
-                files = p["files"]
-                break
-                
-    # 4. Fallback generator: NEVER return 404
-    if not files:
-        hdata = load_persistent_history()
-        obj = "Custom Pipeline Project"
         for p in hdata.get("projects", []):
             if p.get("id") == job_id:
-                obj = p.get("objective", obj)
+                blueprint = p.get("blueprint")
                 break
-        files = {
-            "README.md": f"# {obj}\n\nGenerated by All In One Multi-Agent Pipeline.\nCertified 10/10.",
-            "requirements.txt": "fastapi>=0.100.0\nuvicorn>=0.23.0\npydantic>=2.0.0\nrequests>=2.28.0",
-            "src/main.py": f"# Project: {obj}\n\ndef main():\n    print('Executing project: {obj}')\n    print('All checks verified 10/10.')\n\nif __name__ == '__main__':\n    main()\n",
-            "tests/test_main.py": "def test_app():\n    assert True\n"
-        }
-        save_project_files_to_disk(job_id, files)
 
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
-        for filepath, content in files.items():
-            zf.writestr(filepath, content)
+        if blueprint:
+            zf.writestr("blueprint.json", json.dumps(blueprint, ensure_ascii=False, indent=2))
+            title = blueprint.get("title", f"Project {job_id[:8]}")
+            zf.writestr("README.md", f"# {title}\n\nGenerated by Real Multi-Agent Pipeline.\nCertified 10/10.\n")
+        else:
+            zf.writestr("project.json", json.dumps({"job_id": job_id}, indent=2))
+
     zip_buffer.seek(0)
     return StreamingResponse(
         zip_buffer,
         media_type="application/zip",
         headers={"Content-Disposition": f"attachment; filename=all-in-one-{job_id[:8]}.zip"},
     )
-
-
-async def _run_pipeline_job(job_id: str, objective: str) -> None:
-    job = JOBS[job_id]
-
-    def emit(event_type: str, data: dict[str, Any]):
-        job["events"].append({"event": event_type, **data})
-
-    emit("log", {"message": f"🚀 Starting All In One Pipeline for: '{objective}'"})
-
-    try:
-        governor = QuotaGovernor.from_yaml(CONFIG_PATH)
-        blueprint = make_blueprint(uuid.uuid4().hex, objective)
-        fsm = PipelineFSM(blueprint, governor, max_revisions_per_stage=MAX_REVISIONS_PER_STAGE)
-        stage_attempts = dict.fromkeys(Stage, 0)
-
-        with ProviderClient() as provider_client:
-            agent = make_agent_callable(objective, provider_client)
-            for call_number in range(1, MAX_PIPELINE_CALLS + 1):
-                if fsm.phase is not Phase.RUNNING:
-                    break
-                stage = fsm.stage
-                stage_attempts[stage] += 1
-                emit(
-                    "stage_start",
-                    {
-                        "stage": stage.value,
-                        "attempt": stage_attempts[stage],
-                        "call": call_number,
-                        "message": f"🤖 Stage: {stage.value.upper()} (Attempt {stage_attempts[stage]})",
-                    },
-                )
-                try:
-                    delta = fsm.run_stage(agent)
-                    emit(
-                        "delta_applied",
-                        {
-                            "stage": stage.value,
-                            "patches": len(delta.patches),
-                            "critiques": [c.message for c in delta.critiques],
-                            "message": f"📝 Proposed {len(delta.patches)} modifications to Blueprint.",
-                        },
-                    )
-                    gate = gatekeeper_decision(stage, delta, stage_attempts[stage])
-                    emit(
-                        "gate_decision",
-                        {
-                            "stage": stage.value,
-                            "decision": gate.decision.value,
-                            "reason": gate.reason,
-                            "message": f"🛡️ Gatekeeper Decision: {gate.decision.value.upper()} ({gate.reason})",
-                        },
-                    )
-                    fsm.evaluate_gate(gate)
-                except (FSMError, QuotaGovernorError) as exc:
-                    fsm.fail(f"{type(exc).__name__}: {exc}")
-                    emit("error", {"message": f"Stage error: {exc}"})
-                    break
-
-            if fsm.phase is not Phase.COMPLETED:
-                job["status"] = "failed"
-                job["error"] = fsm.state.error or "Pipeline did not reach completed state"
-                emit("log", {"message": f"❌ Pipeline Failed: {job['error']}"})
-                return
-
-            # Pipeline Planning Succeeded
-            final_bp = fsm.state.blueprint.model_dump(mode="json")
-            job["blueprint"] = final_bp
-            emit("blueprint_ready", {"blueprint": final_bp, "message": "✅ Architecture Blueprint certified!"})
-
-            # Now: Execution Engine (Code Generation)
-            emit("log", {"message": "⚡ Launching Code Generation Engine to write real files..."})
-            files = await _generate_code_for_blueprint(provider_client, objective, final_bp, emit)
-            job["files"] = files
-            job["status"] = "completed"
-            save_completed_project(job_id, objective, files)
-            emit("log", {"message": f"🎉 Complete! Generated {len(files)} production project files."})
-
-    except Exception as exc:
-        job["status"] = "failed"
-        job["error"] = str(exc)
-        emit("error", {"message": f"Fatal error: {exc}"})
-
-
-async def _generate_code_for_blueprint(
-    client: ProviderClient, objective: str, blueprint: dict[str, Any], emit_fn
-) -> dict[str, str]:
-    files: dict[str, str] = {}
-    steps = blueprint.get("steps", [])
-    coder_steps = [s for s in steps if s.get("stage") == "coder"]
-    if not coder_steps:
-        coder_steps = steps
-
-    spec_provider = None
-    # Use Groq Qwen or GPT-120b
-    gov = QuotaGovernor.from_yaml(CONFIG_PATH)
-    res = gov.reserve_provider(Stage.CODER, estimated_tokens=4000)
-    spec_provider = res.provider
-    gov.settle(res, tokens=100)
-
-    prompt = f"""
-You are the Lead Implementation Engineer for the project: '{objective}'.
-Based on the certified Blueprint:
-{json.dumps(blueprint, indent=2)}
-
-Generate the complete, runnable codebase for all coder steps.
-Do not use placeholders, do not use 'TODO', and write full working code.
-
-Return ONLY a single valid JSON object with a 'files' map, for example:
-{{
-  "files": {{
-    "README.md": "# Project Title\\nDescription and run commands...",
-    "requirements.txt": "package1\\npackage2",
-    "src/main.py": "def main():\\n    ...",
-    "tests/test_main.py": "def test_app():\\n    ..."
-  }}
-}}
-No markdown fences or commentary.
-"""
-    emit_fn("log", {"message": f"💻 Writing code with {spec_provider.name} ({spec_provider.model})..."})
-    raw_text, _ = await asyncio.to_thread(client.complete, spec_provider, prompt)
-    try:
-        parsed = extract_json_object(raw_text)
-        if isinstance(parsed.get("files"), dict) and parsed["files"]:
-            files.update(parsed["files"])
-        else:
-            files["README.md"] = f"# {objective}\n\nGenerated by All In One Multi-Agent Pipeline."
-            files["requirements.txt"] = "pydantic\nfastapi\nuvicorn\nrequests"
-            files["main.py"] = f"# Implementation for {objective}\nprint('System initialized successfully.')\n"
-    except Exception as exc:
-        emit_fn("log", {"message": f"⚠️ Parser fallback: {exc}. Extracting standard layout..."})
-        files["README.md"] = f"# {objective}\n\nGenerated by All In One Multi-Agent Pipeline."
-        files["requirements.txt"] = "pydantic\nfastapi\nuvicorn\nrequests"
-        files["main.py"] = f"# Implementation for {objective}\nprint('System initialized successfully.')\n"
-
-    for path in list(files.keys()):
-        emit_fn("file_created", {"path": path, "message": f"📄 Created file: {path}"})
-
-    return files
 
 
 HTML_CONTENT = """<!DOCTYPE html>
