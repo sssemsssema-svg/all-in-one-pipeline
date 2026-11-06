@@ -1103,16 +1103,30 @@ ${lastCouncilData.coder_solution}
         }
         historyCache.projects.forEach(p => {
           const div = document.createElement('div');
-          div.className = 'bg-slate-950 p-3.5 rounded-2xl border border-slate-800 flex items-center justify-between gap-3';
+          div.className = 'bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col gap-3 shadow-sm';
+          const encodedObj = encodeURIComponent(p.objective || '');
           div.innerHTML = `
-            <div>
-              <h4 class="font-bold text-white text-xs flex items-center gap-2">
-                <span>${p.name}</span>
+            <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-800/60 pb-2">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-cube text-indigo-400 text-sm"></i>
+                <h4 class="font-bold text-white text-xs">${p.name}</h4>
                 <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono">${p.status}</span>
-              </h4>
-              <p class="text-[11px] text-slate-400 mt-1">${p.objective}</p>
+              </div>
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <button type="button" onclick="copyProjectObjective('${encodedObj}')" class="px-2.5 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/60 text-indigo-200 text-xs font-bold flex items-center gap-1 border border-indigo-500/30 transition shadow-sm" title="نسخ كلام هذا المشروع">
+                  <i class="fa-regular fa-copy"></i> نسخ الكلام والبرومبت
+                </button>
+                ${p.download_url ? `
+                <a href="${p.download_url}" class="px-2.5 py-1 rounded-lg bg-emerald-600/30 hover:bg-emerald-600/60 text-emerald-200 text-xs font-bold flex items-center gap-1 border border-emerald-500/30 transition">
+                  <i class="fa-solid fa-download"></i> تحميل Zip
+                </a>` : ''}
+                ${p.url ? `
+                <a href="${p.url}" target="_blank" class="px-2.5 py-1 rounded-lg bg-purple-600/30 hover:bg-purple-600/60 text-purple-200 text-xs font-bold flex items-center gap-1 border border-purple-500/30 transition">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> فتح البرنامج
+                </a>` : ''}
+              </div>
             </div>
-            ${p.url ? `<a href="${p.url}" target="_blank" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-white text-[11px] font-bold whitespace-nowrap">فتح البرنامج</a>` : ''}
+            <p class="text-[11px] text-slate-300 bg-slate-900/70 p-2.5 rounded-xl border border-slate-800/80 font-mono leading-relaxed select-all">${p.objective}</p>
           `;
           box.appendChild(div);
         });
@@ -1123,20 +1137,41 @@ ${lastCouncilData.coder_solution}
         }
         historyCache.patches.forEach(pt => {
           const div = document.createElement('div');
-          div.className = 'bg-slate-950 p-3.5 rounded-2xl border border-slate-800 flex flex-col gap-2';
+          div.className = 'bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col gap-3 shadow-sm';
+          const encodedDir = encodeURIComponent(pt.directive || '');
+          const encodedCode = encodeURIComponent(pt.code || '');
           div.innerHTML = `
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-purple-300 text-xs">${pt.title}</span>
-              <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono">${pt.score}</span>
+            <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-800/60 pb-2">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-wand-magic-sparkles text-purple-400 text-sm"></i>
+                <span class="font-bold text-purple-300 text-xs">${pt.title}</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono font-bold">${pt.score}</span>
+              </div>
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <button type="button" onclick="copyHistoryText('${encodedDir}', 'تم نسخ أمر التركيب الصارم!')" class="px-2.5 py-1 rounded-lg bg-amber-600/30 hover:bg-amber-600/60 text-amber-200 text-xs font-bold flex items-center gap-1 border border-amber-500/30 transition">
+                  <i class="fa-regular fa-copy"></i> نسخ الأمر الصارم
+                </button>
+                ${pt.code ? `
+                <button type="button" onclick="copyHistoryText('${encodedCode}', 'تم نسخ الكود المعتمد!')" class="px-2.5 py-1 rounded-lg bg-emerald-600/30 hover:bg-emerald-600/60 text-emerald-200 text-xs font-bold flex items-center gap-1 border border-emerald-500/30 transition">
+                  <i class="fa-solid fa-code"></i> نسخ الكود
+                </button>` : ''}
+              </div>
             </div>
-            <p class="text-[11px] text-amber-200/80 font-mono leading-relaxed">${pt.directive}</p>
-            <div class="flex items-center justify-end gap-2 mt-1">
-              <button onclick="copyToClipboard(\`${encodeURIComponent(pt.directive)}\`, 'تم نسخ أمر التركيب!')" class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white"><i class="fa-regular fa-copy"></i> نسخ الأمر</button>
-            </div>
+            <pre class="text-[11px] text-amber-100 bg-slate-900/70 p-2.5 rounded-xl border border-slate-800/80 font-mono whitespace-pre-wrap leading-relaxed select-all">${pt.directive}</pre>
           `;
           box.appendChild(div);
         });
       }
+    }
+
+    function copyProjectObjective(encodedText) {
+      const text = decodeURIComponent(encodedText);
+      copyToClipboard(text, 'تم نسخ كلام وفكرة المشروع إلى الحافظة!');
+    }
+
+    function copyHistoryText(encodedText, successMsg) {
+      const text = decodeURIComponent(encodedText);
+      copyToClipboard(text, successMsg || 'تم النسخ بنجاح!');
     }
 
     // ==============================================================
